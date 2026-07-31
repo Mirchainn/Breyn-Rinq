@@ -73,14 +73,22 @@ button {
 
 <hr>
 
-<button class="team1" onclick="pressTeam('Komanda 1')">
-Komanda 1
+<input id="name1" placeholder="1-ci komandanın adı">
+
+<br>
+
+<button class="team1" onclick="pressTeam(document.getElementById('name1').value || 'Komanda 1')">
+Komanda 1 BAS
 </button>
 
 <br>
 
-<button class="team2" onclick="pressTeam('Komanda 2')">
-Komanda 2
+<input id="name2" placeholder="2-ci komandanın adı">
+
+<br>
+
+<button class="team2" onclick="pressTeam(document.getElementById('name2').value || 'Komanda 2')">
+Komanda 2 BAS
 </button>
 
 <div id="status">
