@@ -114,7 +114,7 @@ DAXİL OL
 
 <br>
 
-<button class="team">
+<button class="team" onclick="joinRoom()">
 QOŞUL
 </button>
 
@@ -223,6 +223,50 @@ set(ref(db, "rooms/" + code), {
 active:true,
 created:Date.now()
 });
+
+});
+
+});
+
+}
+function joinRoom(){
+
+let name = document.getElementById("teamName").value;
+let code = document.getElementById("roomCode").value;
+
+
+if(name==="" || code===""){
+    alert("Ad və otaq kodunu yaz");
+    return;
+}
+
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,get})=>{
+
+
+get(ref(db,"rooms/"+code))
+.then((snapshot)=>{
+
+
+if(snapshot.exists()){
+
+alert("Qoşuldun: " + name);
+
+}
+else{
+
+alert("Belə otaq yoxdur");
+
+}
+
+
+});
+
 
 });
 
