@@ -123,32 +123,9 @@ QOŞUL
 
 <h2 id="myTeam"></h2>
 
-function pressButton(){
-
-let name = document.getElementById("teamName").value;
-let code = document.getElementById("roomCode").value;
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set})=>{
-
-set(ref(db,"rooms/"+code+"/pressed"),{
-
-team:name,
-valid:true,
-time:Date.now()
-
-});
-
-});
-
-});
-
-}
-
+<button class="team" onclick="pressButton()" style="height:200px;font-size:40px;">
+🔴 BAS
+</button>
 </div>
 
 
@@ -373,34 +350,6 @@ console.log("START göndərildi");
 
 }
 
-function resetGame(){
-
-let code = document.getElementById("roomDisplay").innerText
-.replace("🏠 Otaq kodu: ","")
-.trim();
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set,remove})=>{
-
-set(ref(db,"rooms/"+code+"/gameStarted"),false);
-
-remove(ref(db,"rooms/"+code+"/pressed"));
-
-let winner = document.getElementById("winner");
-
-if(winner){
-winner.innerHTML="";
-}
-
-});
-
-});
-
-}
 function resetGame(){
 
 let code = document.getElementById("roomDisplay").innerText
