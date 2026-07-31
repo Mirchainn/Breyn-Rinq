@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brain Ring</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111827;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    padding: 20px;
+}
+
+h1 {
+    font-size: 35px;
+}
+
+button {
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    margin: 10px;
+    border: none;
+    border-radius: 15px;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.start {
+    background: #22c55e;
+}
+
+.reset {
+    background: #ef4444;
+}
+
+.team1 {
+    background: #2563eb;
+}
+
+.team2 {
+    background: #dc2626;
+}
+
+#status {
+    margin-top: 30px;
+    font-size: 28px;
+    min-height: 50px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧠 Brain Ring</h1>
+
+<button class="start" onclick="startGame()">START</button>
+
+<br>
+
+<button class="reset" onclick="resetGame()">RESET</button>
+
+<hr>
+
+<button class="team1" onclick="pressTeam('Komanda 1')">
+Komanda 1
+</button>
+
+<br>
+
+<button class="team2" onclick="pressTeam('Komanda 2')">
+Komanda 2
+</button>
+
+<div id="status">
+Hazır
+</div>
+
+</div>
+
+
+<script>
+
+let started = false;
+let winner = null;
+let startTime;
+
+
+function startGame(){
+
+    started = true;
+    winner = null;
+    startTime = Date.now();
+
+    document.getElementById("status").innerHTML =
+    "🟢 BAŞLADI!";
+
+}
+
+
+function pressTeam(team){
+
+    if(!started){
+        document.getElementById("status").innerHTML =
+        "❌ FAIL START: " + team;
+        return;
+    }
+
+
+    if(winner == null){
+
+        winner = team;
+
+        let time = (Date.now()-startTime)/1000;
+
+        document.getElementById("status").innerHTML =
+        "🏆 " + team + " BASDI!<br>" +
+        time.toFixed(3)+" saniyə";
+
+        started=false;
+
+    }
+
+}
+
+
+function resetGame(){
+
+    started=false;
+    winner=null;
+
+    document.getElementById("status").innerHTML =
+    "Hazır";
+
+}
+
+</script>
+
+</body>
+</html>
