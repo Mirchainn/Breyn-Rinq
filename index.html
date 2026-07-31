@@ -142,7 +142,7 @@ OTAQ YARAT
 <h2 id="winner"></h2>
 <br>
 
-<button class="admin">
+<button class="admin" onclick="startGame()">
 START
 </button>
 
@@ -330,6 +330,26 @@ set(ref(db,"rooms/"+code+"/pressed"), {
 team:name,
 time:Date.now()
 });
+
+});
+
+});
+
+}
+function startGame(){
+
+let code = document.getElementById("roomDisplay").innerText
+.replace("🏠 Otaq kodu: ","");
+
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,set})=>{
+
+set(ref(db,"rooms/"+code+"/gameStarted"), true);
 
 });
 
