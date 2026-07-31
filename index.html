@@ -123,9 +123,31 @@ QOŞUL
 
 <h2 id="myTeam"></h2>
 
-<button onclick="alert('test')" style="height:200px;font-size:40px;">
-🔴 BAS
-</button>
+function pressButton(){
+
+let name = document.getElementById("teamName").value;
+let code = document.getElementById("roomCode").value;
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,set})=>{
+
+set(ref(db,"rooms/"+code+"/pressed"),{
+
+team:name,
+valid:true,
+time:Date.now()
+
+});
+
+});
+
+});
+
+}
 
 </div>
 
