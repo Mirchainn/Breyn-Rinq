@@ -263,7 +263,12 @@ get(ref(db,"rooms/"+code))
 
 if(snapshot.exists()){
 
-alert("Qoşuldun: " + name);
+document.getElementById("teamPage").style.display="none";
+
+document.getElementById("gamePage").style.display="block";
+
+document.getElementById("myTeam").innerHTML =
+"🧠 " + name;
 
 }
 else{
