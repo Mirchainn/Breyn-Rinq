@@ -139,7 +139,7 @@ OTAQ YARAT
 </button>
 
 <h3 id="roomDisplay"></h3>
-
+<h2 id="winner"></h2>
 <br>
 
 <button class="admin">
@@ -218,7 +218,7 @@ let code = Math.floor(100000 + Math.random()*900000);
 
 document.getElementById("roomDisplay").innerHTML =
 "🏠 Otaq kodu: " + code;
-
+listenPress(code);
 
 import("./firebase.js").then((module)=>{
 
@@ -230,6 +230,33 @@ import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 set(ref(db, "rooms/" + code), {
 active:true,
 created:Date.now()
+});
+
+});
+
+});
+
+}
+function listenPress(code){
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,onValue})=>{
+
+onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
+
+let data=snapshot.val();
+
+if(data){
+
+document.getElementById("winner").innerHTML =
+"🔴 "+data.team+" BASDI!";
+
+}
+
 });
 
 });
