@@ -489,9 +489,10 @@ let code = document.getElementById("roomCode").value;
 
 
 if(name==="" || code===""){
-    alert("Ad və otaq kodunu yaz");
-    return;
+alert("Ad və otaq kodunu yaz");
+return;
 }
+
 
 
 import("./firebase.js").then((module)=>{
@@ -516,7 +517,7 @@ document.getElementById("gamePage").style.display="block";
 
 
 document.getElementById("myTeam").innerHTML =
-"🧠 " + name;
+"🧠 "+name;
 
 
 
@@ -524,8 +525,7 @@ let status = document.getElementById("teamStatus");
 
 
 
-
-// BAS SİSTEMİ
+// BAS NƏTİCƏSİ
 
 onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
 
@@ -540,35 +540,23 @@ if(data){
 
 if(button){
 
-button.disabled = true;
-button.innerHTML = "🔒";
+button.disabled=true;
+button.innerHTML="🔒";
 
 }
 
 
 
-if(data.team === name && data.valid === false){
+if(data.team===name && data.valid===false){
 
-
-if(status){
-
-status.innerHTML = "❌ FAIL START";
+status.innerHTML="❌ FAIL START";
 
 }
 
+else if(data.valid===true){
 
-}
-
-else if(data.valid === true){
-
-
-if(status){
-
-status.innerHTML =
-"🔴 " + data.team + " artıq basdı!";
-
-}
-
+status.innerHTML=
+"🔴 "+data.team+" artıq basdı!";
 
 }
 
@@ -580,16 +568,9 @@ status.innerHTML =
 
 
 
+// RESET
 
-// RESET SİQNALI
-
-onValue(ref(db,"rooms/"+code+"/resetSignal"),(snapshot)=>{
-
-
-let signal = snapshot.val();
-
-
-if(signal){
+onValue(ref(db,"rooms/"+code+"/resetSignal"),()=>{
 
 
 let button = document.querySelector("#gamePage button");
@@ -597,18 +578,15 @@ let button = document.querySelector("#gamePage button");
 
 if(button){
 
-button.disabled = false;
-button.innerHTML = "🔴 BAS";
+button.disabled=false;
+button.innerHTML="🔴 BAS";
 
 }
 
 
 if(status){
 
-status.innerHTML = "";
-
-}
-
+status.innerHTML="";
 
 }
 
@@ -618,23 +596,22 @@ status.innerHTML = "";
 
 
 
+// SƏS
 
-// SƏS SİQNALI
-
-let startSound = document.getElementById("startSound");
-let resetSound = document.getElementById("resetSound");
+let startSound=document.getElementById("startSound");
+let resetSound=document.getElementById("resetSound");
 
 
 onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
 
-let sound = snapshot.val();
+let sound=snapshot.val();
 
 
 
 if(sound==="start" && startSound){
 
-startSound.currentTime = 0;
+startSound.currentTime=0;
 
 startSound.play().catch(()=>{});
 
@@ -644,7 +621,7 @@ startSound.play().catch(()=>{});
 
 if(sound==="reset" && resetSound){
 
-resetSound.currentTime = 0;
+resetSound.currentTime=0;
 
 resetSound.play().catch(()=>{});
 
@@ -679,9 +656,6 @@ let code = document.getElementById("roomDisplay").innerText
 .trim();
 
 
-console.log("Otaq kodu:", code);
-
-
 import("./firebase.js").then((module)=>{
 
 let db = module.db;
@@ -691,12 +665,31 @@ import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,set})=>{
 
 
-set(ref(db,"rooms/"+code+"/gameStarted"), true)
+set(ref(db,"rooms/"+code+"/gameStarted"),true)
 .then(()=>{
+
 
 console.log("START göndərildi");
 
-set(ref(db,"rooms/"+code+"/sound"), "start");
+
+// iştirakçılar üçün səs siqnalı
+
+set(ref(db,"rooms/"+code+"/sound"),"start");
+
+
+// admin üçün səs
+
+let startSound = document.getElementById("startSound");
+
+if(startSound){
+
+startSound.currentTime = 0;
+
+startSound.play()
+.catch(()=>{});
+
+}
+
 
 });
 
@@ -724,21 +717,57 @@ import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,set,remove})=>{
 
 
+// oyunu bağla
+
 set(ref(db,"rooms/"+code+"/gameStarted"),false);
 
-set(ref(db,"rooms/"+code+"/sound"),"reset");
+
+// əvvəlki basışı sil
 
 remove(ref(db,"rooms/"+code+"/pressed"));
 
 
-let winner = document.getElementById("winner");
+// iştirakçılara reset göndər
 
-if(winner){
-    winner.innerHTML="";
+set(ref(db,"rooms/"+code+"/resetSignal"),Date.now());
+
+
+// gong siqnalı
+
+set(ref(db,"rooms/"+code+"/sound"),"reset");
+
+
+// admin gong
+
+let resetSound = document.getElementById("resetSound");
+
+if(resetSound){
+
+resetSound.currentTime = 0;
+
+resetSound.play()
+.catch(()=>{});
+
 }
 
 
+
+// admin qalib yazısını təmizlə
+
+let winner = document.getElementById("winner");
+
+if(winner){
+
+winner.innerHTML="";
+
+}
+
+
+console.log("RESET göndərildi");
+
+
 });
+
 
 });
 
@@ -817,6 +846,8 @@ document.getElementById("teamStatus").innerHTML =
 <audio id="resetSound" preload="auto">
     <source src="Gong.mp3" type="audio/mpeg">
 </audio>
+<audio id="startSound" src="Ding.mp3" preload="auto"></audio>
 
+<audio id="resetSound" src="Gong.mp3" preload="auto"></audio>
 </body>
 </html>
