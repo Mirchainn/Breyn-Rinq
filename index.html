@@ -285,6 +285,29 @@ alert("Belə otaq yoxdur");
 
 });
 
+} 
+function pressButton(){
+
+let code = document.getElementById("roomCode").value;
+let name = document.getElementById("teamName").value;
+
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,set})=>{
+
+set(ref(db,"rooms/"+code+"/pressed"), {
+team:name,
+time:Date.now()
+});
+
+});
+
+});
+
 }
 </script>
 
