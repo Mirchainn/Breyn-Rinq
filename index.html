@@ -388,18 +388,26 @@ import("./firebase.js").then((module)=>{
 let db = module.db;
 
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,set})=>{
+.then(({ref,get,runTransaction})=>{
 
 get(ref(db,"rooms/"+code+"/gameStarted"))
 .then((snapshot)=>{
 
 let started = snapshot.val() === true;
 
-set(ref(db,"rooms/"+code+"/pressed"),{
+runTransaction(ref(db,"rooms/"+code+"/pressed"),(current)=>{
+
+if(current !== null){
+    return;
+}
+
+return{
 
 team:name,
 valid:started,
 time:Date.now()
+
+};
 
 });
 
