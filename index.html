@@ -163,6 +163,10 @@ document.getElementById("name2").addEventListener("input", function(){
     (this.value || "Komanda 2") + " BAS";
 });
 </script>
+<script type="module">
+import { db } from "./firebase.js";
 
+console.log("Firebase qoşuldu", db);
+</script>
 </body>
 </html>
