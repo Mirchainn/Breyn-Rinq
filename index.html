@@ -388,23 +388,20 @@ import("./firebase.js").then((module)=>{
 let db = module.db;
 
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set})=>{
+.then(({ref,get,set})=>{
+
+get(ref(db,"rooms/"+code+"/gameStarted"))
+.then((snapshot)=>{
+
+let started = snapshot.val() === true;
 
 set(ref(db,"rooms/"+code+"/pressed"),{
 
 team:name,
-valid:true,
+valid:started,
 time:Date.now()
 
-})
-.then(()=>{
-
-console.log("BAS Firebase-ə yazıldı");
-
-})
-.catch((error)=>{
-
-console.log("XƏTA:", error);
+});
 
 });
 
