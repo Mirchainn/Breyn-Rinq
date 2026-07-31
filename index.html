@@ -277,10 +277,12 @@ function joinRoom(){
 let name = document.getElementById("teamName").value;
 let code = document.getElementById("roomCode").value;
 
+
 if(name==="" || code===""){
     alert("Ad və otaq kodunu yaz");
     return;
 }
+
 
 import("./firebase.js").then((module)=>{
 
@@ -289,30 +291,55 @@ let db = module.db;
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,get,onValue})=>{
 
+
 get(ref(db,"rooms/"+code))
 .then((snapshot)=>{
 
+
 if(snapshot.exists()){
 
+
 document.getElementById("teamPage").style.display="none";
+
 document.getElementById("gamePage").style.display="block";
+
 
 document.getElementById("myTeam").innerHTML =
 "🧠 " + name;
 
-let sound = document.getElementById("dingSound");
 
-onValue(ref(db,"rooms/"+code+"/gameStarted"),(snapshot)=>{
 
-if(snapshot.val()===true){
+let startSound = document.getElementById("startSound");
+let resetSound = document.getElementById("resetSound");
 
-sound.currentTime = 0;
 
-sound.play().catch(()=>{});
+onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
+
+
+let sound = snapshot.val();
+
+
+if(sound==="start"){
+
+startSound.currentTime = 0;
+
+startSound.play().catch(()=>{});
 
 }
 
+
+if(sound==="reset"){
+
+resetSound.currentTime = 0;
+
+resetSound.play().catch(()=>{});
+
+}
+
+
 });
+
+
 
 }
 else{
@@ -321,7 +348,9 @@ alert("Belə otaq yoxdur");
 
 }
 
+
 });
+
 
 });
 
