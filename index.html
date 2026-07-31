@@ -247,12 +247,21 @@ import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 
 onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
 
-let data=snapshot.val();
+let data = snapshot.val();
 
 if(data){
 
+if(data.valid === true){
+
 document.getElementById("winner").innerHTML =
 "🔴 "+data.team+" BASDI!";
+
+}else{
+
+document.getElementById("winner").innerHTML =
+"⚠️ "+data.team+" FAIL";
+
+}
 
 }
 
