@@ -219,7 +219,6 @@ let code = Math.floor(100000 + Math.random()*900000);
 document.getElementById("roomDisplay").innerHTML =
 "🏠 Otaq kodu: " + code;
 listenPress(code);
-
 import("./firebase.js").then((module)=>{
 
 let db = module.db;
@@ -339,7 +338,10 @@ time:Date.now()
 function startGame(){
 
 let code = document.getElementById("roomDisplay").innerText
-.replace("🏠 Otaq kodu: ","");
+.replace("🏠 Otaq kodu: ","")
+.trim();
+
+console.log("Otaq kodu:", code);
 
 
 import("./firebase.js").then((module)=>{
@@ -349,7 +351,12 @@ let db = module.db;
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,set})=>{
 
-set(ref(db,"rooms/"+code+"/gameStarted"), true);
+set(ref(db,"rooms/"+code+"/gameStarted"), true)
+.then(()=>{
+
+console.log("START göndərildi");
+
+});
 
 });
 
