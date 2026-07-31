@@ -352,76 +352,7 @@ console.log("START göndərildi");
 });
 
 }
-function pressButton(){
 
-let code = document.getElementById("roomCode").value;
-let name = document.getElementById("teamName").value;
-
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,set})=>{
-
-
-get(ref(db,"rooms/"+code+"/pressed"))
-.then((pressedSnap)=>{
-
-
-if(pressedSnap.exists()){
-
-alert("Artıq basılıb!");
-return;
-
-}
-
-
-get(ref(db,"rooms/"+code+"/gameStarted"))
-.then((startSnap)=>{
-
-
-if(startSnap.exists() && startSnap.val()===true){
-
-
-set(ref(db,"rooms/"+code+"/pressed"),{
-
-team:name,
-time:Date.now(),
-valid:true
-
-});
-
-
-}else{
-
-
-set(ref(db,"rooms/"+code+"/pressed"),{
-
-team:name,
-time:Date.now(),
-valid:false,
-reason:"START verilməyib"
-
-});
-
-
-}
-
-
-});
-
-
-});
-
-
-});
-
-});
-
-}
-function resetGame(){
 
 let code = document.getElementById("roomDisplay").innerText
 .replace("🏠 Otaq kodu: ","")
