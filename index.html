@@ -524,29 +524,46 @@ let startSound = document.getElementById("startSound");
 let resetSound = document.getElementById("resetSound");
 
 
+// iOS səs icazəsi
+if(startSound){
+
+startSound.volume = 0;
+
+startSound.play()
+.then(()=>{
+
+startSound.pause();
+startSound.currentTime = 0;
+startSound.volume = 1;
+
+console.log("Səs hazırdır");
+
+})
+.catch((error)=>{
+
+console.log("Səs icazəsi alınmadı:", error);
+
+});
+
+}
+
+
+// Firebase səs dinləyicisi
 
 onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
 
 let sound = snapshot.val();
 
-
-console.log("Gələn siqnal:", sound);
-
+console.log("Gələn səs:", sound);
 
 
-if(sound==="start"){
 
-if(startSound){
+if(sound==="start" && startSound){
 
 startSound.currentTime = 0;
 
 startSound.play()
-.then(()=>{
-
-console.log("Ding çaldı");
-
-})
 .catch((error)=>{
 
 console.log("Ding xətası:", error);
@@ -555,22 +572,13 @@ console.log("Ding xətası:", error);
 
 }
 
-}
 
 
-
-if(sound==="reset"){
-
-if(resetSound){
+if(sound==="reset" && resetSound){
 
 resetSound.currentTime = 0;
 
 resetSound.play()
-.then(()=>{
-
-console.log("Gong çaldı");
-
-})
 .catch((error)=>{
 
 console.log("Gong xətası:", error);
@@ -579,12 +587,9 @@ console.log("Gong xətası:", error);
 
 }
 
-}
-
 
 
 });
-
 
 
 }
@@ -602,7 +607,6 @@ alert("Belə otaq yoxdur");
 
 
 });
-
 
 }
 function startGame(){
