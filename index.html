@@ -146,7 +146,7 @@ OTAQ YARAT
 START
 </button>
 <h2 id="winner"></h2>
-<button class="team">
+<button class="admin" onclick="resetGame()">
 RESET
 </button>
 
@@ -346,6 +346,34 @@ set(ref(db,"rooms/"+code+"/gameStarted"), true)
 console.log("START göndərildi");
 
 });
+
+});
+
+});
+
+}
+function resetGame(){
+
+let code = document.getElementById("roomDisplay").innerText
+.replace("🏠 Otaq kodu: ","")
+.trim();
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,set,remove})=>{
+
+set(ref(db,"rooms/"+code+"/gameStarted"),false);
+
+remove(ref(db,"rooms/"+code+"/pressed"));
+
+let winner = document.getElementById("winner");
+
+if(winner){
+winner.innerHTML="";
+}
 
 });
 
