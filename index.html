@@ -254,12 +254,12 @@ if(data){
 if(data.valid === true){
 
 document.getElementById("winner").innerHTML =
-"🔴 "+data.team+" BASDI!";
+"🔴 " + data.team + " BASDI!";
 
 }else{
 
 document.getElementById("winner").innerHTML =
-"⚠️ "+data.team+" FAIL";
+"⚠️ " + data.team + " FAIL";
 
 }
 
@@ -351,6 +351,34 @@ console.log("START göndərildi");
 
 }
 
+function resetGame(){
+
+let code = document.getElementById("roomDisplay").innerText
+.replace("🏠 Otaq kodu: ","")
+.trim();
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,set,remove})=>{
+
+set(ref(db,"rooms/"+code+"/gameStarted"),false);
+
+remove(ref(db,"rooms/"+code+"/pressed"));
+
+let winner = document.getElementById("winner");
+
+if(winner){
+winner.innerHTML="";
+}
+
+});
+
+});
+
+}
 function resetGame(){
 
 let code = document.getElementById("roomDisplay").innerText
