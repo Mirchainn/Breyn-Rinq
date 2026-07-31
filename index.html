@@ -520,55 +520,84 @@ document.getElementById("myTeam").innerHTML =
 
 
 
-let startSound = document.getElementById("startSound");
-let resetSound = document.getElementById("resetSound");
+let status = document.getElementById("teamStatus");
 
 
-// iOS səs icazəsi
-if(startSound){
+// BAS MƏLUMATI
 
-startSound.volume = 0;
+onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
 
-startSound.play()
-.then(()=>{
 
-startSound.pause();
-startSound.currentTime = 0;
-startSound.volume = 1;
+let data = snapshot.val();
 
-console.log("Səs hazırdır");
 
-})
-.catch((error)=>{
+let button = document.querySelector("#gamePage button");
 
-console.log("Səs icazəsi alınmadı:", error);
 
-});
+if(data){
+
+
+if(button){
+
+button.disabled = true;
+button.innerHTML = "🔒";
 
 }
 
 
-// Firebase səs dinləyicisi
+
+if(data.team === name && data.valid === false){
+
+
+if(status){
+
+status.innerHTML = "❌ FAIL START";
+
+}
+
+
+}
+
+
+else if(data.valid === true){
+
+
+if(status){
+
+status.innerHTML =
+"🔴 " + data.team + " artıq basdı!";
+
+}
+
+
+}
+
+
+
+}
+
+});
+
+
+
+
+// SƏS SİQNALI
+
+let startSound = document.getElementById("startSound");
+let resetSound = document.getElementById("resetSound");
+
 
 onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
 
 let sound = snapshot.val();
 
-console.log("Gələn səs:", sound);
-
-
 
 if(sound==="start" && startSound){
 
 startSound.currentTime = 0;
 
-startSound.play()
-.catch((error)=>{
-
-console.log("Ding xətası:", error);
-
-});
+startSound.play().catch(()=>{});
 
 }
 
@@ -578,18 +607,13 @@ if(sound==="reset" && resetSound){
 
 resetSound.currentTime = 0;
 
-resetSound.play()
-.catch((error)=>{
-
-console.log("Gong xətası:", error);
-
-});
+resetSound.play().catch(()=>{});
 
 }
 
 
-
 });
+
 
 
 }
