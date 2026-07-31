@@ -77,7 +77,7 @@ button {
 
 <br>
 
-<button class="team1" onclick="pressTeam(document.getElementById('name1').value || 'Komanda 1')">
+<button id="btn1" class="team1" onclick="pressTeam(document.getElementById('name1').value || 'Komanda 1')">
 Komanda 1 BAS
 </button>
 
@@ -87,7 +87,7 @@ Komanda 1 BAS
 
 <br>
 
-<button class="team2" onclick="pressTeam(document.getElementById('name2').value || 'Komanda 2')">
+<button id="btn2" class="team2" onclick="pressTeam(document.getElementById('name2').value || 'Komanda 2')">
 Komanda 2 BAS
 </button>
 
@@ -152,7 +152,16 @@ function resetGame(){
     "Hazır";
 
 }
+document.getElementById("name1").addEventListener("input", function(){
+    document.getElementById("btn1").innerHTML =
+    (this.value || "Komanda 1") + " BAS";
+});
 
+
+document.getElementById("name2").addEventListener("input", function(){
+    document.getElementById("btn2").innerHTML =
+    (this.value || "Komanda 2") + " BAS";
+});
 </script>
 
 </body>
