@@ -276,7 +276,7 @@ function joinRoom(){
 
 let name = document.getElementById("teamName").value;
 let code = document.getElementById("roomCode").value;
-console.log("Audio tapıldı:", startSound, resetSound);
+
 
 if(name==="" || code===""){
     alert("Ad və otaq kodunu yaz");
@@ -287,6 +287,7 @@ if(name==="" || code===""){
 import("./firebase.js").then((module)=>{
 
 let db = module.db;
+
 
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,get,onValue})=>{
@@ -313,28 +314,63 @@ let startSound = document.getElementById("startSound");
 let resetSound = document.getElementById("resetSound");
 
 
+
 onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
 
 let sound = snapshot.val();
 
 
+console.log("Gələn siqnal:", sound);
+
+
+
 if(sound==="start"){
+
+if(startSound){
 
 startSound.currentTime = 0;
 
-startSound.play().catch(()=>{});
+startSound.play()
+.then(()=>{
+
+console.log("Ding çaldı");
+
+})
+.catch((error)=>{
+
+console.log("Ding xətası:", error);
+
+});
 
 }
+
+}
+
 
 
 if(sound==="reset"){
 
+if(resetSound){
+
 resetSound.currentTime = 0;
 
-resetSound.play().catch(()=>{});
+resetSound.play()
+.then(()=>{
+
+console.log("Gong çaldı");
+
+})
+.catch((error)=>{
+
+console.log("Gong xətası:", error);
+
+});
 
 }
+
+}
+
 
 
 });
@@ -354,7 +390,9 @@ alert("Belə otaq yoxdur");
 
 });
 
+
 });
+
 
 }
 function startGame(){
