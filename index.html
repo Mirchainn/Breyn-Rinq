@@ -523,13 +523,14 @@ document.getElementById("myTeam").innerHTML =
 let status = document.getElementById("teamStatus");
 
 
-// BAS MƏLUMATI
+
+
+// BAS SİSTEMİ
 
 onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
 
 
 let data = snapshot.val();
-
 
 let button = document.querySelector("#gamePage button");
 
@@ -558,7 +559,6 @@ status.innerHTML = "❌ FAIL START";
 
 }
 
-
 else if(data.valid === true){
 
 
@@ -573,10 +573,48 @@ status.innerHTML =
 }
 
 
-
 }
 
 });
+
+
+
+
+
+// RESET SİQNALI
+
+onValue(ref(db,"rooms/"+code+"/resetSignal"),(snapshot)=>{
+
+
+let signal = snapshot.val();
+
+
+if(signal){
+
+
+let button = document.querySelector("#gamePage button");
+
+
+if(button){
+
+button.disabled = false;
+button.innerHTML = "🔴 BAS";
+
+}
+
+
+if(status){
+
+status.innerHTML = "";
+
+}
+
+
+}
+
+
+});
+
 
 
 
@@ -591,6 +629,7 @@ onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
 
 let sound = snapshot.val();
+
 
 
 if(sound==="start" && startSound){
