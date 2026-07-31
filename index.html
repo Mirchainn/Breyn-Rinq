@@ -10,52 +10,262 @@
 <style>
 body {
     margin:0;
-    font-family:Arial, sans-serif;
-    background:#111827;
+    font-family:"Arial", sans-serif;
+    background:
+    radial-gradient(circle at top,#334155,#020617 70%);
     color:white;
     text-align:center;
+    min-height:100vh;
 }
+
 
 .box {
     padding:25px;
+    max-width:600px;
+    margin:auto;
 }
+
+
+/* Başlıqlar */
+
+h1 {
+
+    font-size:55px;
+    margin:35px 0;
+
+    background:linear-gradient(90deg,#38bdf8,#818cf8,#f472b6);
+    -webkit-background-clip:text;
+    color:transparent;
+
+    letter-spacing:2px;
+
+}
+
+
+h2 {
+
+    font-size:32px;
+    margin:25px;
+
+}
+
+
+h3 {
+
+    font-size:28px;
+    color:#facc15;
+
+}
+
+
+/* Düymələr */
 
 button {
+
     width:90%;
-    max-width:400px;
-    padding:20px;
-    margin:10px;
-    border:0;
-    border-radius:15px;
-    font-size:22px;
-    font-weight:bold;
+    max-width:420px;
+
+    padding:22px;
+
+    margin:15px;
+
+    border:none;
+
+    border-radius:25px;
+
+    font-size:25px;
+
+    font-weight:800;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:0.25s;
+
+    box-shadow:
+    0 12px 30px rgba(0,0,0,.45);
+
 }
+
+
+button:hover {
+
+    transform:translateY(-3px);
+
+}
+
+
+button:active {
+
+    transform:scale(.94);
+
+}
+
+
+/* Admin düyməsi */
 
 .admin {
-    background:#22c55e;
+
+    background:
+    linear-gradient(135deg,#22c55e,#15803d);
+
 }
+
+
+/* Komanda düyməsi */
 
 .team {
-    background:#2563eb;
+
+    background:
+    linear-gradient(135deg,#2563eb,#1e40af);
+
 }
+
+
+/* Inputlar */
 
 input {
+
     width:80%;
-    max-width:350px;
-    padding:15px;
-    margin:10px;
-    border-radius:10px;
+    max-width:380px;
+
+    padding:18px;
+
+    margin:12px;
+
     border:none;
-    font-size:18px;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    color:#111827;
+
+    font-size:20px;
+
+    text-align:center;
+
+    outline:none;
+
 }
+
+
+/* Gizli hissə */
 
 .hidden {
+
     display:none;
+
 }
 
-#status {
-    margin-top:25px;
-    font-size:24px;
+
+/* Otaq kodu */
+
+#roomDisplay {
+
+    display:inline-block;
+
+    padding:15px 25px;
+
+    border-radius:20px;
+
+    background:#0f172a;
+
+    color:#facc15;
+
+    font-size:35px;
+
+    margin:20px;
+
+    box-shadow:
+    0 0 25px rgba(250,204,21,.25);
+
+}
+
+
+/* Qalib yazısı */
+
+#winner {
+
+    font-size:35px;
+
+    color:#38bdf8;
+
+    margin:25px;
+
+    animation:pulse 1s infinite;
+
+}
+
+
+/* Status */
+
+#teamStatus {
+
+    font-size:30px;
+
+    margin:25px;
+
+    font-weight:bold;
+
+}
+
+
+/* BAS düyməsi */
+
+#gamePage button {
+
+    width:230px;
+
+    height:230px;
+
+    border-radius:50%;
+
+    font-size:45px;
+
+    background:
+
+    radial-gradient(circle at 30% 25%,
+    #f87171,
+    #dc2626 50%,
+    #7f1d1d);
+
+    box-shadow:
+
+    0 0 40px rgba(239,68,68,.7),
+
+    inset 0 0 25px rgba(255,255,255,.25);
+
+}
+
+
+#gamePage button:active {
+
+    box-shadow:
+
+    0 0 10px rgba(239,68,68,.5);
+
+}
+
+
+
+/* Animasiya */
+
+@keyframes pulse {
+
+0% {
+    transform:scale(1);
+}
+
+50% {
+    transform:scale(1.05);
+}
+
+100% {
+    transform:scale(1);
+}
+
 }
 
 </style>
