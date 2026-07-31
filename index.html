@@ -211,6 +211,23 @@ let code = Math.floor(100000 + Math.random()*900000);
 document.getElementById("roomDisplay").innerHTML =
 "🏠 Otaq kodu: " + code;
 
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,set})=>{
+
+set(ref(db, "rooms/" + code), {
+active:true,
+created:Date.now()
+});
+
+});
+
+});
+
 }
 </script>
 
