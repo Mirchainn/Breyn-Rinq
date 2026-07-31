@@ -399,7 +399,7 @@ let started = snapshot.val() === true;
 runTransaction(ref(db,"rooms/"+code+"/pressed"),(current)=>{
 
 if(current !== null){
-    return;
+    return current;
 }
 
 return{
@@ -409,6 +409,31 @@ valid:started,
 time:Date.now()
 
 };
+
+}).then((result)=>{
+
+if(result.committed){
+
+if(started){
+
+document.getElementById("teamStatus").innerHTML =
+"✅ Siz ilk basdınız!";
+
+}
+else{
+
+document.getElementById("teamStatus").innerHTML =
+"❌ FAIL START";
+
+}
+
+}
+else{
+
+document.getElementById("teamStatus").innerHTML =
+"⛔ Başqa komanda cavab verdi.";
+
+}
 
 });
 
