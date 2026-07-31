@@ -1,172 +1,207 @@
+
 <!DOCTYPE html>
 <html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Brain Ring</title>
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #111827;
-    color: white;
-    text-align: center;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#111827;
+    color:white;
+    text-align:center;
 }
 
-.container {
-    padding: 20px;
-}
-
-h1 {
-    font-size: 35px;
+.box {
+    padding:25px;
 }
 
 button {
-    width: 90%;
-    max-width: 400px;
-    padding: 25px;
-    margin: 10px;
-    border: none;
-    border-radius: 15px;
-    font-size: 25px;
-    font-weight: bold;
-    cursor: pointer;
+    width:90%;
+    max-width:400px;
+    padding:20px;
+    margin:10px;
+    border:0;
+    border-radius:15px;
+    font-size:22px;
+    font-weight:bold;
 }
 
-.start {
-    background: #22c55e;
+.admin {
+    background:#22c55e;
 }
 
-.reset {
-    background: #ef4444;
+.team {
+    background:#2563eb;
 }
 
-.team1 {
-    background: #2563eb;
+input {
+    width:80%;
+    max-width:350px;
+    padding:15px;
+    margin:10px;
+    border-radius:10px;
+    border:none;
+    font-size:18px;
 }
 
-.team2 {
-    background: #dc2626;
+.hidden {
+    display:none;
 }
 
 #status {
-    margin-top: 30px;
-    font-size: 28px;
-    min-height: 50px;
+    margin-top:25px;
+    font-size:24px;
 }
 
 </style>
 </head>
 
+
 <body>
 
-<div class="container">
+<div class="box">
+
+
+<div id="main">
 
 <h1>🧠 Brain Ring</h1>
 
-<button class="start" onclick="startGame()">START</button>
-
-<br>
-
-<button class="reset" onclick="resetGame()">RESET</button>
-
-<hr>
-
-<input id="name1" placeholder="1-ci komandanın adı">
-
-<br>
-
-<button id="btn1" class="team1" onclick="pressTeam(document.getElementById('name1').value || 'Komanda 1')">
-Komanda 1 BAS
+<button class="admin" onclick="showAdmin()">
+👑 Aparıcı
 </button>
 
 <br>
 
-<input id="name2" placeholder="2-ci komandanın adı">
+<button class="team" onclick="showTeam()">
+👥 Komanda
+</button>
+
+</div>
+
+
+
+<div id="adminPage" class="hidden">
+
+<h2>👑 Admin giriş</h2>
+
+<input id="password" type="password" placeholder="Şifrə">
 
 <br>
 
-<button id="btn2" class="team2" onclick="pressTeam(document.getElementById('name2').value || 'Komanda 2')">
-Komanda 2 BAS
+<button class="admin" onclick="loginAdmin()">
+DAXİL OL
 </button>
 
-<div id="status">
-Hazır
 </div>
 
+
+
+
+<div id="teamPage" class="hidden">
+
+<h2>👥 Komanda</h2>
+
+<input id="teamName" placeholder="Komanda adı">
+
+<br>
+
+<input id="roomCode" placeholder="Otaq kodu">
+
+<br>
+
+<button class="team">
+QOŞUL
+</button>
+
 </div>
+
+
+
+<div id="adminPanel" class="hidden">
+
+<h2>Admin panel</h2>
+
+<p>Otaq hazırdır</p>
+
+<button class="admin">
+START
+</button>
+
+<button class="team">
+RESET
+</button>
+
+</div>
+
+
+<div id="status"></div>
+
+
+</div>
+
 
 
 <script>
 
-let started = false;
-let winner = null;
-let startTime;
+function hideAll(){
 
-
-function startGame(){
-
-    started = true;
-    winner = null;
-    startTime = Date.now();
-
-    document.getElementById("status").innerHTML =
-    "🟢 BAŞLADI!";
+document.getElementById("main").style.display="none";
+document.getElementById("adminPage").style.display="none";
+document.getElementById("teamPage").style.display="none";
+document.getElementById("adminPanel").style.display="none";
 
 }
 
 
-function pressTeam(team){
 
-    if(!started){
-        document.getElementById("status").innerHTML =
-        "❌ FAIL START: " + team;
-        return;
-    }
+function showAdmin(){
 
+hideAll();
 
-    if(winner == null){
-
-        winner = team;
-
-        let time = (Date.now()-startTime)/1000;
-
-        document.getElementById("status").innerHTML =
-        "🏆 " + team + " BASDI!<br>" +
-        time.toFixed(3)+" saniyə";
-
-        started=false;
-
-    }
+document.getElementById("adminPage").style.display="block";
 
 }
 
 
-function resetGame(){
 
-    started=false;
-    winner=null;
+function showTeam(){
 
-    document.getElementById("status").innerHTML =
-    "Hazır";
+hideAll();
+
+document.getElementById("teamPage").style.display="block";
 
 }
-document.getElementById("name1").addEventListener("input", function(){
-    document.getElementById("btn1").innerHTML =
-    (this.value || "Komanda 1") + " BAS";
-});
 
 
-document.getElementById("name2").addEventListener("input", function(){
-    document.getElementById("btn2").innerHTML =
-    (this.value || "Komanda 2") + " BAS";
-});
+
+function loginAdmin(){
+
+let pass=document.getElementById("password").value;
+
+
+if(pass==="TMGRT"){
+
+hideAll();
+
+document.getElementById("adminPanel").style.display="block";
+
+}
+
+else{
+
+alert("Səhv şifrə");
+
+}
+
+}
+
 </script>
-<script type="module">
-import { db } from "./firebase.js";
 
-console.log("Firebase qoşuldu", db);
-</script>
+
 </body>
 </html>
