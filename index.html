@@ -145,7 +145,7 @@ OTAQ YARAT
 <button class="admin" onclick="startGame()">
 START
 </button>
-
+<h2 id="winner"></h2>
 <button class="team">
 RESET
 </button>
@@ -253,11 +253,13 @@ if(data){
 
 if(data.valid === true){
 
-alert("🔴 "+data.team+" BASDI!");
+document.getElementById("winner").innerHTML =
+"🔴 "+data.team+" BASDI!";
 
 }else{
 
-alert("⚠️ "+data.team+" FAIL");
+document.getElementById("winner").innerHTML =
+"⚠️ "+data.team+" FAIL";
 
 }
 
