@@ -851,6 +851,35 @@ document.getElementById("teamStatus").innerHTML =
 });
 
 }
+function unlockSound(){
+
+let sound = document.getElementById("startSound");
+
+if(sound){
+
+sound.currentTime = 0;
+
+sound.play()
+.then(()=>{
+
+sound.pause();
+
+sound.currentTime = 0;
+
+alert("Səs aktiv edildi ✅");
+
+})
+.catch((error)=>{
+
+console.log("Səs xətası:", error);
+
+alert("Səs aktiv olmadı ❌");
+
+});
+
+}
+
+}
 </script>
 <audio id="startSound" preload="auto">
     <source src="Ding.mp3" type="audio/mpeg">
