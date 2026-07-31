@@ -363,6 +363,7 @@ let code = document.getElementById("roomDisplay").innerText
 .replace("🏠 Otaq kodu: ","")
 .trim();
 
+
 console.log("Otaq kodu:", code);
 
 
@@ -370,48 +371,62 @@ import("./firebase.js").then((module)=>{
 
 let db = module.db;
 
+
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,set})=>{
+
 
 set(ref(db,"rooms/"+code+"/gameStarted"), true)
 .then(()=>{
 
 console.log("START göndərildi");
 
-});
+set(ref(db,"rooms/"+code+"/sound"), "start");
 
 });
 
+
 });
+
+
+});
+
 
 }
-
 function resetGame(){
 
 let code = document.getElementById("roomDisplay").innerText
 .replace("🏠 Otaq kodu: ","")
 .trim();
 
+
 import("./firebase.js").then((module)=>{
 
 let db = module.db;
 
+
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,set,remove})=>{
 
+
 set(ref(db,"rooms/"+code+"/gameStarted"),false);
 
+set(ref(db,"rooms/"+code+"/sound"),"reset");
+
 remove(ref(db,"rooms/"+code+"/pressed"));
+
 
 let winner = document.getElementById("winner");
 
 if(winner){
-winner.innerHTML="";
+    winner.innerHTML="";
 }
 
+
 });
 
 });
+
 
 }
 function pressButton(){
