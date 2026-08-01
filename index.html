@@ -307,6 +307,9 @@ input {
 <button class="admin" onclick="loginAdmin()">
 DAXİL OL
 </button>
+<button onclick="goHome()">
+⬅️ Geri
+</button>
 
 </div>
 
@@ -348,6 +351,9 @@ text-align:center;">
 
 <button class="team" onclick="joinRoom()">
 QOŞUL
+</button>
+<button onclick="goHome()">
+⬅️ Geri
 </button>
 
 </div>
@@ -894,6 +900,13 @@ alert("Səs aktiv olmadı ❌");
 });
 
 }
+
+}
+function goHome(){
+
+hideAll();
+
+document.getElementById("main").style.display="block";
 
 }
 </script>
