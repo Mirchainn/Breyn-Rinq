@@ -121,7 +121,16 @@ button:active {
     linear-gradient(135deg,#2563eb,#1e40af);
 
 }
+/* Köməkçi düymələr */
+.soundBtn,
+.backBtn {
 
+    background:
+    linear-gradient(135deg,#475569,#1e293b);
+
+    color:white;
+
+}
 
 /* Inputlar */
 
@@ -345,14 +354,14 @@ text-align:center;">
 
 <br>
 
-<button onclick="unlockSound()">
+<button class="soundBtn" onclick="unlockSound()">
 🔊 SƏSİ YOXLA
 </button>
 
 <button class="team" onclick="joinRoom()">
 QOŞUL
 </button>
-<button onclick="goHome()">
+<button class="backBtn" onclick="goHome()">
 ⬅️ Geri
 </button>
 
