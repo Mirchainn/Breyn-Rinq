@@ -760,6 +760,8 @@ status.innerHTML="";
 
 let startSound=document.getElementById("startSound");
 let resetSound=document.getElementById("resetSound");
+let failSound=document.getElementById("failSound");
+let pressSound=document.getElementById("pressSound");
 
 onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
@@ -778,6 +780,30 @@ if(sound==="reset" && resetSound){
 resetSound.currentTime=0;
 
 resetSound.play().catch(()=>{});
+
+}
+if(sound==="fail" && failSound){
+
+failSound.currentTime=0;
+
+failSound.play().catch((e)=>{
+
+console.log("Fail səs xətası:",e);
+
+});
+
+}
+
+
+if(sound==="press" && pressSound){
+
+pressSound.currentTime=0;
+
+pressSound.play().catch((e)=>{
+
+console.log("Press səs xətası:",e);
+
+});
 
 }
 let failSound=document.getElementById("failSound");
