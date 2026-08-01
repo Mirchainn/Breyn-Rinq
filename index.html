@@ -553,7 +553,17 @@ table:color
 
 document.getElementById("myTeam").innerHTML =
 (color==="green" ? "🟢 " : "🔴 ") + name;
+let playButton = document.querySelector("#gamePage button");
 
+if(color==="green"){
+
+playButton.style.background =
+"radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
+
+playButton.style.boxShadow =
+"0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
+
+}
 
 
 let status = document.getElementById("teamStatus");
