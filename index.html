@@ -609,7 +609,34 @@ playButton.style.boxShadow =
 
 
 let status = document.getElementById("teamStatus");
+onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
 
+let teams = snapshot.val() || {};
+
+let green = "-";
+let red = "-";
+
+for(let team in teams){
+
+if(teams[team].table==="green") green = team;
+
+if(teams[team].table==="red") red = team;
+
+}
+
+let g1 = document.getElementById("greenTeam");
+let r1 = document.getElementById("redTeam");
+
+if(g1) g1.innerHTML = "🟢 Yaşıl: " + green;
+if(r1) r1.innerHTML = "🔴 Qırmızı: " + red;
+
+let g2 = document.getElementById("greenTeamPlayer");
+let r2 = document.getElementById("redTeamPlayer");
+
+if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
+if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
+
+});
 
 
 // BAS NƏTİCƏSİ
