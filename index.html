@@ -546,6 +546,28 @@ document.getElementById("winner").innerHTML =
 }
 
 });
+onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
+
+let teams = snapshot.val() || {};
+
+let green = "-";
+let red = "-";
+
+for(let team in teams){
+
+if(teams[team].table==="green") green = team;
+
+if(teams[team].table==="red") red = team;
+
+}
+
+let g = document.getElementById("greenTeam");
+let r = document.getElementById("redTeam");
+
+if(g) g.innerHTML = "🟢 Yaşıl: " + green;
+if(r) r.innerHTML = "🔴 Qırmızı: " + red;
+
+});
 
 });
 
