@@ -593,7 +593,7 @@ let db = module.db;
 
 
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,onValue})=>{
+.then(({ref,get,set,onValue})=>{
 
 
 get(ref(db,"rooms/"+code))
@@ -601,26 +601,6 @@ get(ref(db,"rooms/"+code))
 
 
 if(snapshot.exists()){
-
-get(ref(db,"rooms/"+code+"/teams"))
-.then((teamSnapshot)=>{
-
-let teams = teamSnapshot.val() || {};
-
-for(let team in teams){
-
-if(teams[team].table === color){
-
-alert("⚠️ Bu masa artıq tutulub!");
-
-return;
-
-}
-
-}
-
-
-// buradan aşağı köhnə kod davam edir
 
 document.getElementById("teamPage").style.display="none";
 
