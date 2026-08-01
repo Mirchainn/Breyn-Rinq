@@ -780,7 +780,26 @@ resetSound.currentTime=0;
 resetSound.play().catch(()=>{});
 
 }
+let failSound=document.getElementById("failSound");
+let pressSound=document.getElementById("pressSound");
 
+
+if(sound==="fail" && failSound){
+
+failSound.currentTime=0;
+
+failSound.play().catch(()=>{});
+
+}
+
+
+if(sound==="press" && pressSound){
+
+pressSound.currentTime=0;
+
+pressSound.play().catch(()=>{});
+
+}
 });
 
 });
@@ -934,7 +953,7 @@ import("./firebase.js").then((module)=>{
 let db = module.db;
 
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,runTransaction})=>{
+.then(({ref,get,runTransaction,set})=>{
 
 get(ref(db,"rooms/"+code+"/gameStarted"))
 .then((snapshot)=>{
@@ -964,11 +983,15 @@ if(started){
 document.getElementById("teamStatus").innerHTML =
 "✅ Siz ilk basdınız!";
 
+set(ref(db,"rooms/"+code+"/sound"),"press");
+
 }
 else{
 
 document.getElementById("teamStatus").innerHTML =
 "❌ FAIL START";
+
+set(ref(db,"rooms/"+code+"/sound"),"fail");
 
 }
 
@@ -1033,7 +1056,13 @@ document.getElementById("main").style.display="block";
 <audio id="resetSound" preload="auto">
     <source src="Gong.mp3" type="audio/mpeg">
 </audio>
+<audio id="failSound" preload="auto">
+    <source src="Fail.mp3" type="audio/mpeg">
+</audio>
 
+<audio id="pressSound" preload="auto">
+    <source src="Press.mp3" type="audio/mpeg">
+</audio>
 
 
 </body>
