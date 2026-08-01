@@ -686,19 +686,37 @@ button.innerHTML="🔒";
 
 }
 
-if(data.team===name && data.valid===false){
+if(data.valid===false){
+
+if(data.team===name){
 
 status.innerHTML="❌ FAIL START";
 
 }
+else{
+
+status.innerHTML=
+"❌ "+data.team+" FAIL START etdi!";
+
+}
+
+}
 
 else if(data.valid===true){
+
+if(data.team===name){
+
+status.innerHTML="✅ Siz ilk basdınız!";
+
+}
+else{
 
 status.innerHTML=
 "🔴 "+data.team+" artıq basdı!";
 
 }
 
+}
 }
 
 });
