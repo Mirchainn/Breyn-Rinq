@@ -440,7 +440,7 @@ RESET
 
 
 <script>
-alert("JS işləyir");
+
 
 function hideAll(){
 
@@ -586,27 +586,39 @@ alert("Ad və otaq kodunu yaz");
 return;
 }
 
-
-
 import("./firebase.js").then((module)=>{
 
 let db = module.db;
 
-
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,onValue})=>{
-
+.then(({ref,get,set,onValue})=>{
 
 get(ref(db,"rooms/"+code))
 .then((snapshot)=>{
 
-
 if(snapshot.exists()){
+
+get(ref(db,"rooms/"+code+"/teams"))
+.then((teamSnapshot)=>{
+
+let teams = teamSnapshot.val() || {};
+
+for(let team in teams){
+
+if(teams[team].table === color){
+
+alert("⚠️ Bu masa artıq tutulub!");
+return;
+
+}
+
+}
+
+// masa boşdur, davam edir
 
 document.getElementById("teamPage").style.display="none";
 
 document.getElementById("gamePage").style.display="block";
-
 
 set(ref(db,"rooms/"+code+"/teams/"+name),{
 table:color
@@ -614,6 +626,7 @@ table:color
 
 document.getElementById("myTeam").innerHTML =
 (color==="green" ? "🟢 " : "🔴 ") + name;
+
 let playButton = document.querySelector("#gamePage button");
 
 if(color==="green"){
@@ -625,7 +638,6 @@ playButton.style.boxShadow =
 "0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
 
 }
-
 
 let status = document.getElementById("teamStatus");
 onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
@@ -657,19 +669,15 @@ if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
 
 });
 
-
 // BAS NƏTİCƏSİ
 
 onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
-
 
 let data = snapshot.val();
 
 let button = document.querySelector("#gamePage button");
 
-
 if(data){
-
 
 if(button){
 
@@ -677,8 +685,6 @@ button.disabled=true;
 button.innerHTML="🔒";
 
 }
-
-
 
 if(data.team===name && data.valid===false){
 
@@ -693,21 +699,15 @@ status.innerHTML=
 
 }
 
-
 }
 
 });
-
-
-
 
 // RESET
 
 onValue(ref(db,"rooms/"+code+"/resetSignal"),()=>{
 
-
 let button = document.querySelector("#gamePage button");
-
 
 if(button){
 
@@ -716,31 +716,22 @@ button.innerHTML="🔴 BAS";
 
 }
 
-
 if(status){
 
 status.innerHTML="";
 
 }
 
-
 });
-
-
-
 
 // SƏS
 
 let startSound=document.getElementById("startSound");
 let resetSound=document.getElementById("resetSound");
 
-
 onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
-
 let sound=snapshot.val();
-
-
 
 if(sound==="start" && startSound){
 
@@ -750,8 +741,6 @@ startSound.play().catch(()=>{});
 
 }
 
-
-
 if(sound==="reset" && resetSound){
 
 resetSound.currentTime=0;
@@ -760,24 +749,21 @@ resetSound.play().catch(()=>{});
 
 }
 
+});
 
 });
 
-
-
 }
+
 else{
 
 alert("Belə otaq yoxdur");
 
 }
 
-
 });
 
-
 });
-
 
 });
 
