@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -415,6 +414,7 @@ box-shadow:0 0 15px rgba(255,255,255,.08);
 <span id="redScorePlayer">0</span> 🔴
 
 </div>
+<h1 id="playerTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
 <button class="team" onclick="pressButton()" style="height:200px;font-size:40px;">
 🔴 BAS
 </button>
@@ -455,10 +455,13 @@ box-shadow:0 0 15px rgba(255,255,255,.08);
 <h2 id="winner"></h2>
 <br>
 
+<h1 id="adminTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
 <button class="admin" onclick="startGame()">
 START
 </button>
-<h2 id="winner"></h2>
+<button class="admin" onclick="continueGame()">
+NEXT
+</button>
 <button class="admin" onclick="resetGame()">
 RESET
 </button>
@@ -518,6 +521,28 @@ border-radius:15px;">
 
 
 <script>
+
+let timerInterval = null;
+
+function startLocalTimer(startTime, duration = 20) {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        let passed = Math.floor((Date.now() - startTime) / 1000);
+        let rem = duration - passed;
+        if (rem <= 0) {
+            rem = 0;
+            clearInterval(timerInterval);
+        }
+        let aTimer = document.getElementById("adminTimer");
+        let pTimer = document.getElementById("playerTimer");
+        if (aTimer) aTimer.innerHTML = rem;
+        if (pTimer) pTimer.innerHTML = rem;
+    }, 200);
+}
+
+function stopLocalTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+}
 
 
 function hideAll(){
@@ -614,6 +639,7 @@ onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
 let data = snapshot.val();
 
 if(data){
+stopLocalTimer();
 
 if(data.valid === true){
 
@@ -669,6 +695,30 @@ let rPlayer = document.getElementById("redScorePlayer");
 
 if(gPlayer) gPlayer.innerHTML = scores.green;
 if(rPlayer) rPlayer.innerHTML = scores.red;
+});
+
+// ADMIN ÜÇÜN TAYMER VƏ SƏS
+onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+    let tData = snapshot.val();
+    if (tData && tData.status === "started") {
+        startLocalTimer(tData.startTime, tData.duration || 20);
+    } else {
+        stopLocalTimer();
+    }
+});
+
+let startSound = document.getElementById("startSound");
+let resetSound = document.getElementById("resetSound");
+let failSound = document.getElementById("failSound");
+let pressSound = document.getElementById("pressSound");
+
+onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
+    let sound = snapshot.val();
+    if (!sound) return;
+    if (sound.type === "start" && startSound) { startSound.currentTime = 0; startSound.play().catch(()=>{}); }
+    if (sound.type === "reset" && resetSound) { resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
+    if (sound.type === "fail" && failSound) { failSound.currentTime = 0; failSound.play().catch(()=>{}); }
+    if (sound.type === "press" && pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
 });
 
 });
@@ -770,6 +820,16 @@ if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
 
 });
 
+// TAYMER DİNƏMƏSİ
+onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+    let tData = snapshot.val();
+    if (tData && tData.status === "started") {
+        startLocalTimer(tData.startTime, tData.duration || 20);
+    } else {
+        stopLocalTimer();
+    }
+});
+
 // BAS NƏTİCƏSİ
 
 onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
@@ -779,6 +839,7 @@ let data = snapshot.val();
 let button = document.querySelector("#gamePage button");
 
 if(data){
+stopLocalTimer();
 
 if(button){
 
@@ -934,8 +995,9 @@ let db = module.db;
 
 
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set})=>{
+.then(({ref,set,remove})=>{
 
+remove(ref(db, "rooms/" + code + "/pressed"));
 
 set(ref(db,"rooms/"+code+"/gameStarted"),true)
 .then(()=>{
@@ -943,6 +1005,11 @@ set(ref(db,"rooms/"+code+"/gameStarted"),true)
 
 console.log("START göndərildi");
 
+set(ref(db, "rooms/" + code + "/timer"), {
+    startTime: Date.now(),
+    duration: 20,
+    status: "started"
+});
 
 // iştirakçılar üçün səs siqnalı
 
@@ -976,6 +1043,45 @@ startSound.play()
 
 
 }
+
+function continueGame(){
+let code = document.getElementById("roomDisplay").innerText
+.replace("🏠 Otaq kodu: ","")
+.trim();
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,get,set,remove})=>{
+
+get(ref(db, "rooms/" + code + "/timer")).then((snapshot) => {
+    let tData = snapshot.val() || { startTime: Date.now(), duration: 20 };
+    let passed = Math.floor((Date.now() - tData.startTime) / 1000);
+    let rem = (tData.duration || 20) - passed;
+    if (rem < 0) rem = 0;
+
+    remove(ref(db, "rooms/" + code + "/pressed"));
+    set(ref(db, "rooms/" + code + "/resetSignal"), Date.now());
+
+    set(ref(db, "rooms/" + code + "/timer"), {
+        status: "started",
+        startTime: Date.now(),
+        duration: rem
+    });
+
+    set(ref(db, "rooms/" + code + "/sound"), {
+        type: "start",
+        time: Date.now()
+    });
+});
+
+});
+
+});
+}
+
 function resetGame(){
 
 let code = document.getElementById("roomDisplay").innerText
@@ -1001,6 +1107,13 @@ set(ref(db,"rooms/"+code+"/gameStarted"),false);
 
 remove(ref(db,"rooms/"+code+"/pressed"));
 
+set(ref(db, "rooms/" + code + "/timer"), {
+    status: "stopped",
+    duration: 20
+});
+document.getElementById("adminTimer").innerHTML = "20";
+let pT = document.getElementById("playerTimer");
+if (pT) pT.innerHTML = "20";
 
 // iştirakçılara reset göndər
 
@@ -1061,7 +1174,7 @@ import("./firebase.js").then((module)=>{
 let db = module.db;
 
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,runTransaction,set})=>{
+.then(({ref,get,runTransaction,set,update})=>{
 
 get(ref(db,"rooms/"+code+"/gameStarted"))
 .then((snapshot)=>{
@@ -1085,6 +1198,18 @@ time:Date.now()
 }).then((result)=>{
 
 if(result.committed){
+
+get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
+    let tData = tSnap.val() || { startTime: Date.now(), duration: 20 };
+    let passed = Math.floor((Date.now() - tData.startTime) / 1000);
+    let rem = (tData.duration || 20) - passed;
+    if (rem < 0) rem = 0;
+    
+    update(ref(db, "rooms/" + code + "/timer"), {
+        status: "stopped",
+        duration: rem
+    });
+});
 
 if(started){
 
