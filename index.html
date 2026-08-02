@@ -414,6 +414,7 @@ box-shadow:0 0 15px rgba(255,255,255,.08);
 <span id="redScorePlayer">0</span> 🔴
 
 </div>
+<h1 id="playerTimer" style="font-size: 50px; color: #facc15; margin: 10px 0;">20</h1>
 <button class="team" onclick="pressButton()" style="height:200px;font-size:40px;">
 🔴 BAS
 </button>
@@ -453,7 +454,7 @@ box-shadow:0 0 15px rgba(255,255,255,.08);
 </div>
 <h2 id="winner"></h2>
 <br>
-
+<h1 id="adminTimer" style="font-size: 50px; color: #facc15; margin: 10px 0;">20</h1>
 <button class="admin" onclick="startGame()">
 START
 </button>
@@ -518,7 +519,7 @@ border-radius:15px;">
 
 <script>
 
-
+let timerInterval = null;
 function hideAll(){
 
 document.getElementById("main").style.display="none";
@@ -670,6 +671,14 @@ onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
 });
 
 onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
+onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+    let timerData = snapshot.val();
+    if (timerData && timerData.status === "started") {
+        startLocalCountdown(timerData.startTime);
+    } else {
+        stopLocalCountdown();
+    }
+});
 
 let scores = snapshot.val() || {
 green:0,
@@ -809,6 +818,7 @@ let data = snapshot.val();
 let button = document.querySelector("#gamePage button");
 
 if(data){
+if (timerInterval) clearInterval(timerInterval);
 
 if(button){
 
@@ -879,6 +889,14 @@ let startSound=document.getElementById("startSound");
 let resetSound=document.getElementById("resetSound");
 let failSound=document.getElementById("failSound");
 let pressSound=document.getElementById("pressSound");
+onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+    let timerData = snapshot.val();
+    if (timerData && timerData.status === "started") {
+        startLocalCountdown(timerData.startTime);
+    } else {
+        stopLocalCountdown();
+    }
+});
 
 onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
@@ -976,27 +994,19 @@ console.log("START göndərildi");
 
 // iştirakçılar üçün səs siqnalı
 
-set(ref(db,"rooms/"+code+"/sound"),{
-    type:"start",
-    time:Date.now()
+// Orijinal set funksiyasını bununla dəyişirik:
+set(ref(db, "rooms/" + code + "/timer"), {
+    startTime: Date.now(),
+    status: "started"
+}).then(() => {
+    console.log("Taymer START göndərildi");
+    
+    // Köhnə səs siqnalı və digər kodların bura davam edir:
+    set(ref(db,"rooms/"+code+"/sound"),{ type:"start", time:Date.now() });
+    let startSound = document.getElementById("startSound");
+    if(startSound){ startSound.currentTime = 0; startSound.play().catch(()=>{}); }
 });
 
-
-// admin üçün səs
-
-let startSound = document.getElementById("startSound");
-
-if(startSound){
-
-startSound.currentTime = 0;
-
-startSound.play()
-.catch(()=>{});
-
-}
-
-
-});
 
 
 });
@@ -1030,6 +1040,7 @@ set(ref(db,"rooms/"+code+"/gameStarted"),false);
 // əvvəlki basışı sil
 
 remove(ref(db,"rooms/"+code+"/pressed"));
+set(ref(db, "rooms/" + code + "/timer"), { status: "stopped", startTime: 0 });
 
 
 // iştirakçılara reset göndər
@@ -1272,6 +1283,37 @@ hideAll();
 document.getElementById("main").style.display="block";
 
 } 
+function startLocalCountdown(startTime) {
+    if (timerInterval) clearInterval(timerInterval); // Əvvəlki taymer varsa təmizlə
+
+    let adminDisplay = document.getElementById("adminTimer");
+    let playerDisplay = document.getElementById("playerTimer");
+
+    timerInterval = setInterval(() => {
+        let now = Date.now();
+        let passed = Math.floor((now - startTime) / 1000); // Neçə saniyə keçib
+        let timeLeft = 20 - passed; // Qalan saniyə
+
+        if (timeLeft <= 0) {
+            timeLeft = 0;
+            clearInterval(timerInterval);
+            // 20 saniyə bitəndə düymə səsi kimi bir səs və ya avtomatik kilid qoyula bilər
+        }
+
+        if (adminDisplay) adminDisplay.innerHTML = timeLeft;
+        if (playerDisplay) playerDisplay.innerHTML = timeLeft;
+    }, 200); // Hər 200 milisaniyədən bir yoxlayır ki, tam dəqiq sinxron olsun
+}
+
+function stopLocalCountdown() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    let adminDisplay = document.getElementById("adminTimer");
+    let playerDisplay = document.getElementById("playerTimer");
+    if (adminDisplay) adminDisplay.innerHTML = "20";
+    if (playerDisplay) playerDisplay.innerHTML = "20";
+}
 
 </script>
 <audio id="startSound" preload="auto">
