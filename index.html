@@ -1009,7 +1009,10 @@ if(started){
 document.getElementById("teamStatus").innerHTML =
 "✅ Siz ilk basdınız!";
 
-set(ref(db,"rooms/"+code+"/sound"),"press");
+set(ref(db,"rooms/"+code+"/sound"),{
+    type:"press",
+    time:Date.now()
+});
 
 }
 else{
@@ -1017,7 +1020,10 @@ else{
 document.getElementById("teamStatus").innerHTML =
 "❌ FAIL START";
 
-set(ref(db,"rooms/"+code+"/sound"),"fail");
+set(ref(db,"rooms/"+code+"/sound"),{
+    type:"fail",
+    time:Date.now()
+});
 
 }
 
