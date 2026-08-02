@@ -134,11 +134,11 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
     </div>
     <div id="gamePage" class="hidden">
         <h2 id="myTeam"></h2>
-        <div id="teamsTablePlayer" style="margin:12px auto; max-width:320px; background:#0f172a; border-radius:12px; padding:10px; font-size:18px; font-weight:bold; line-height:1.6; box-shadow:0 0 15px rgba(255,255,255,.08);">
+        <div id="teamsTablePlayer" style="margin:12px auto; max-width:320px; background:#0f172a; border-radius:12px; padding:10px; font-size:18px; font-weight:bold; line-height:1.6;">
             <div id="greenTeamPlayer">🟢 Yaşıl: -</div>
             <div id="redTeamPlayer">🔴 Qırmızı: -</div>
         </div>
-        <div id="scoreBoardPlayer" style="margin:15px auto; max-width:300px; background:#0f172a; border-radius:12px; padding:12px; font-size:22px; font-weight:bold; box-shadow:0 0 15px rgba(255,255,255,.08);">
+        <div id="scoreBoardPlayer" style="margin:15px auto; max-width:300px; background:#0f172a; border-radius:12px; padding:12px; font-size:22px; font-weight:bold;">
             🟢 <span id="greenScorePlayer">0</span> &nbsp;&nbsp;:&nbsp;&nbsp; <span id="redScorePlayer">0</span> 🔴
         </div>
         <h1 id="playerTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
@@ -149,7 +149,7 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
         <h2>👑 Admin panel</h2>
         <button class="admin" onclick="createRoom()">OTAQ YARAT</button>
         <h3 id="roomDisplay"></h3>
-        <div id="teamsTable" style="margin:12px auto; max-width:320px; background:#0f172a; border-radius:12px; padding:10px; font-size:18px; font-weight:bold; line-height:1.6; box-shadow:0 0 15px rgba(255,255,255,.08);">
+        <div id="teamsTable" style="margin:12px auto; max-width:320px; background:#0f172a; border-radius:12px; padding:10px; font-size:18px; font-weight:bold; line-height:1.6;">
             <div id="greenTeam">🟢 Yaşıl: -</div>
             <div id="redTeam">🔴 Qırmızı: -</div>
         </div>
@@ -188,8 +188,15 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
 <audio id="pressSound" preload="auto"><source src="press.mp3" type="audio/mpeg"></audio>
 
 <script type="module">
-import { db } from "./firebase.js";
-import { ref, set, get, remove, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get, remove, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  databaseURL: "https://brain-ring-53ef6-default-rtdb.firebaseio.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 let timerInterval = null;
 
