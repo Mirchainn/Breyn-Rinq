@@ -121,7 +121,7 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
         <h2>👥 Komanda</h2>
         <input id="teamName" placeholder="Komanda adı">
         <br>
-        <input id="roomCode" placeholder="Otaq kodu">
+        <input id="roomCode" type="number" placeholder="Otaq kodu">
         <br>
         <select id="teamColor">
             <option value="green">🟢 Yaşıl masa</option>
@@ -320,113 +320,111 @@ function listenPress(code){
 
 window.joinRoom = function(){
     let name = document.getElementById("teamName").value.trim();
-    let code = document.getElementById("roomCode").value.trim();
+    let code = document.getElementById("roomCode").value.toString().trim();
     let color = document.getElementById("teamColor").value;
-    if(name === "" || code === ""){ alert("Ad və otaq kodunu yazın"); return; }
+    
+    if(name === "" || code === ""){ alert("Lütfən ad və otaq kodunu yazın"); return; }
 
     get(ref(db, "rooms/" + code)).then((snapshot) => {
         if(snapshot.exists()){
-            get(ref(db, "rooms/" + code + "/teams")).then((teamSnapshot) => {
-                let teams = teamSnapshot.val() || {};
+            hideAll(); 
+            document.getElementById("gamePage").classList.remove("hidden");
+            
+            // Doğrudan masaya yerləşdiririk
+            set(ref(db, "rooms/" + code + "/teams/" + name), { table: color });
+            document.getElementById("myTeam").innerHTML = (color === "green" ? "🟢 " : "🔴 ") + name;
+            
+            let playButton = document.getElementById("mainPressBtn");
+            if(color === "green" && playButton){
+                playButton.style.background = "radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
+                playButton.style.boxShadow = "0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
+            }
+
+            let status = document.getElementById("teamStatus");
+
+            onValue(ref(db, "rooms/" + code + "/teams"), (snapshot) => {
+                let teams = snapshot.val() || {}; let green = "-"; let red = "-";
                 for(let team in teams){ 
-                    if(teams[team].table === color && team !== name){ 
-                        alert("⚠️ Bu masa artıq tutulub!"); return; 
-                    } 
+                    if(teams[team].table === "green") green = team; 
+                    if(teams[team].table === "red") red = team; 
                 }
-                
-                hideAll(); 
-                document.getElementById("gamePage").classList.remove("hidden");
-                set(ref(db, "rooms/" + code + "/teams/" + name), { table: color });
-                document.getElementById("myTeam").innerHTML = (color === "green" ? "🟢 " : "🔴 ") + name;
-                
-                let playButton = document.getElementById("mainPressBtn");
-                if(color === "green" && playButton){
-                    playButton.style.background = "radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
-                    playButton.style.boxShadow = "0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
-                }
-
-                let status = document.getElementById("teamStatus");
-
-                onValue(ref(db, "rooms/" + code + "/teams"), (snapshot) => {
-                    let teams = snapshot.val() || {}; let green = "-"; let red = "-";
-                    for(let team in teams){ 
-                        if(teams[team].table === "green") green = team; 
-                        if(teams[team].table === "red") red = team; 
-                    }
-                    let g2 = document.getElementById("greenTeamPlayer"); 
-                    let r2 = document.getElementById("redTeamPlayer");
-                    if(g2) g2.innerHTML = "🟢 Yaşıl: " + green; 
-                    if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
-                });
-
-                onValue(ref(db, "rooms/" + code + "/scores"), (snapshot) => {
-                    let scores = snapshot.val() || { green: 0, red: 0 };
-                    let gPlayer = document.getElementById("greenScorePlayer"); 
-                    let rPlayer = document.getElementById("redScorePlayer");
-                    if(gPlayer) gPlayer.innerHTML = scores.green; 
-                    if(rPlayer) rPlayer.innerHTML = scores.red;
-                });
-
-                onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
-                    let timerData = snapshot.val();
-                    if (timerData && timerData.status === "started") { 
-                        startLocalCountdown(timerData.startTime, timerData.duration || 20);
-                    } else { 
-                        stopLocalCountdown(); 
-                    }
-                });
-
-                onValue(ref(db, "rooms/" + code + "/pressed"), (snapshot) => {
-                    let data = snapshot.val(); 
-                    let button = document.getElementById("mainPressBtn");
-                    if(data){
-                        stopLocalCountdown();
-                        if(button){ button.disabled = true; button.innerHTML = "🔒"; }
-                        if(data.valid === false){ 
-                            status.innerHTML = (data.team === name) ? "❌ FAIL START" : "❌ " + data.team + " FAIL START etdi!"; 
-                        } else if(data.valid === true){ 
-                            status.innerHTML = (data.team === name) ? "✅ Siz ilk basdınız!" : "🔴 " + data.team + " artıq basdı!"; 
-                        }
-                    }
-                });
-
-                onValue(ref(db, "rooms/" + code + "/resetSignal"), (snapshot) => {
-                    let sig = snapshot.val(); 
-                    let button = document.getElementById("mainPressBtn");
-                    if(!button) return;
-
-                    if(sig === "clear") {
-                        button.disabled = false; 
-                        button.innerHTML = "🔴 BAS"; 
-                        if(status) status.innerHTML = "";
-                    } else if(sig) {
-                        get(ref(db, "rooms/" + code + "/pressedHistory/" + name)).then((hSnap) => {
-                            if(hSnap.exists() && hSnap.val().valid === false) {
-                                button.disabled = true; 
-                                button.innerHTML = "🔒"; 
-                            } else {
-                                button.disabled = false; 
-                                button.innerHTML = "🔴 BAS"; 
-                                if(status) status.innerHTML = "";
-                            }
-                        });
-                    }
-                });
-
-                let startSound = document.getElementById("startSound"); 
-                let resetSound = document.getElementById("resetSound");
-                let failSound = document.getElementById("failSound"); 
-                let pressSound = document.getElementById("pressSound");
-
-                onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
-                    let sound = snapshot.val(); if(!sound) return;
-                    if(sound.type === "start" && startSound){ startSound.currentTime = 0; startSound.play().catch(()=>{}); }
-                    if(sound.type === "reset" && resetSound){ resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
-                    if(sound.type === "fail" && failSound){ failSound.currentTime = 0; failSound.play().catch(()=>{}); }
-                    if(sound.type === "press" && pressSound){ pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
-                });
+                let g2 = document.getElementById("greenTeamPlayer"); 
+                let r2 = document.getElementById("redTeamPlayer");
+                if(g2) g2.innerHTML = "🟢 Yaşıl: " + green; 
+                if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
             });
-        } else { alert("Belə otaq yoxdur!"); }
+
+            onValue(ref(db, "rooms/" + code + "/scores"), (snapshot) => {
+                let scores = snapshot.val() || { green: 0, red: 0 };
+                let gPlayer = document.getElementById("greenScorePlayer"); 
+                let rPlayer = document.getElementById("redScorePlayer");
+                if(gPlayer) gPlayer.innerHTML = scores.green; 
+                if(rPlayer) rPlayer.innerHTML = scores.red;
+            });
+
+            onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+                let timerData = snapshot.val();
+                if (timerData && timerData.status === "started") { 
+                    startLocalCountdown(timerData.startTime, timerData.duration || 20);
+                } else { 
+                    stopLocalCountdown(); 
+                }
+            });
+
+            onValue(ref(db, "rooms/" + code + "/pressed"), (snapshot) => {
+                let data = snapshot.val(); 
+                let button = document.getElementById("mainPressBtn");
+                if(data){
+                    stopLocalCountdown();
+                    if(button){ button.disabled = true; button.innerHTML = "🔒"; }
+                    if(data.valid === false){ 
+                        status.innerHTML = (data.team === name) ? "❌ FAIL START" : "❌ " + data.team + " FAIL START etdi!"; 
+                    } else if(data.valid === true){ 
+                        status.innerHTML = (data.team === name) ? "✅ Siz ilk basdınız!" : "🔴 " + data.team + " artıq basdı!"; 
+                    }
+                }
+            });
+
+            onValue(ref(db, "rooms/" + code + "/resetSignal"), (snapshot) => {
+                let sig = snapshot.val(); 
+                let button = document.getElementById("mainPressBtn");
+                if(!button) return;
+
+                if(sig === "clear") {
+                    button.disabled = false; 
+                    button.innerHTML = "🔴 BAS"; 
+                    if(status) status.innerHTML = "";
+                } else if(sig) {
+                    get(ref(db, "rooms/" + code + "/pressedHistory/" + name)).then((hSnap) => {
+                        if(hSnap.exists() && hSnap.val().valid === false) {
+                            button.disabled = true; 
+                            button.innerHTML = "🔒"; 
+                        } else {
+                            button.disabled = false; 
+                            button.innerHTML = "🔴 BAS"; 
+                            if(status) status.innerHTML = "";
+                        }
+                    });
+                }
+            });
+
+            let startSound = document.getElementById("startSound"); 
+            let resetSound = document.getElementById("resetSound");
+            let failSound = document.getElementById("failSound"); 
+            let pressSound = document.getElementById("pressSound");
+
+            onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
+                let sound = snapshot.val(); if(!sound) return;
+                if(sound.type === "start" && startSound){ startSound.currentTime = 0; startSound.play().catch(()=>{}); }
+                if(sound.type === "reset" && resetSound){ resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
+                if(sound.type === "fail" && failSound){ failSound.currentTime = 0; failSound.play().catch(()=>{}); }
+                if(sound.type === "press" && pressSound){ pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
+            });
+        } else { 
+            alert("⚠️ " + code + " kodlu otaq tapılmadı! Aparıcı əvvəlcə Otaq Yaratmalıdır."); 
+        }
+    }).catch((error) => {
+        alert("Xəta baş verdi: " + error.message);
     });
 }
 
@@ -494,7 +492,7 @@ window.resetGame = function(){
 
 window.pressButton = function(){
     let name = document.getElementById("teamName").value.trim();
-    let code = document.getElementById("roomCode").value.trim();
+    let code = document.getElementById("roomCode").value.toString().trim();
     
     get(ref(db, "rooms/" + code + "/gameStarted")).then((snapshot) => {
         let started = snapshot.val() === true;
