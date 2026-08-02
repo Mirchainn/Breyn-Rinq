@@ -189,7 +189,7 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, get, remove, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, set, get, remove, onValue, runTransaction, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   databaseURL: "https://brain-ring-53ef6-default-rtdb.firebaseio.com"
@@ -199,6 +199,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let timerInterval = null;
+let myFailedState = false;
 
 window.hideAll = function() {
     document.getElementById("main").classList.add("hidden");
@@ -251,7 +252,7 @@ function listenPress(code){
         let data = snapshot.val();
         let winnerEl = document.getElementById("winner");
         if(data){
-            stopLocalCountdown(); // Basılanda taymer həm admində, həm də komandada dayanır
+            stopLocalCountdown();
             if(data.valid === true){ 
                 winnerEl.innerHTML = "🔴 " + data.team + " BASDI!"; 
             } else { 
@@ -286,22 +287,18 @@ function listenPress(code){
     onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
         let timerData = snapshot.val();
         if (timerData && timerData.status === "started") { 
-            get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
-                if(!pSnap.exists()) startLocalCountdown(timerData.startTime); 
-            });
+            startLocalCountdown(timerData.startTime); 
         } else { 
             stopLocalCountdown(); 
-            let adminDisplay = document.getElementById("adminTimer");
-            let playerDisplay = document.getElementById("playerTimer");
-            if (adminDisplay) adminDisplay.innerHTML = "20";
-            if (playerDisplay) playerDisplay.innerHTML = "20";
         }
     });
 
     let adminPressSound = document.getElementById("pressSound"); 
     let adminFailSound = document.getElementById("failSound");
+    let adminStartSound = document.getElementById("startSound");
     onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
         let sound = snapshot.val(); if (!sound) return;
+        if (sound.type === "start" && adminStartSound) { adminStartSound.currentTime = 0; adminStartSound.play().catch(()=>{}); }
         if (sound.type === "press" && adminPressSound) { adminPressSound.currentTime = 0; adminPressSound.play().catch(()=>{}); }
         if (sound.type === "fail" && adminFailSound) { adminFailSound.currentTime = 0; adminFailSound.play().catch(()=>{}); }
     });
@@ -359,15 +356,9 @@ window.joinRoom = function(){
                 onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
                     let timerData = snapshot.val();
                     if (timerData && timerData.status === "started") { 
-                        get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
-                            if(!pSnap.exists()) startLocalCountdown(timerData.startTime);
-                        });
+                        startLocalCountdown(timerData.startTime);
                     } else { 
                         stopLocalCountdown(); 
-                        let adminDisplay = document.getElementById("adminTimer");
-                        let playerDisplay = document.getElementById("playerTimer");
-                        if (adminDisplay) adminDisplay.innerHTML = "20";
-                        if (playerDisplay) playerDisplay.innerHTML = "20";
                     }
                 });
 
@@ -378,6 +369,7 @@ window.joinRoom = function(){
                         stopLocalCountdown();
                         if(button){ button.disabled = true; button.innerHTML = "🔒"; }
                         if(data.valid === false){ 
+                            if(data.team === name) myFailedState = true;
                             status.innerHTML = (data.team === name) ? "❌ FAIL START" : "❌ " + data.team + " FAIL START etdi!"; 
                         } else if(data.valid === true){ 
                             status.innerHTML = (data.team === name) ? "✅ Siz ilk basdınız!" : "🔴 " + data.team + " artıq basdı!"; 
@@ -391,20 +383,19 @@ window.joinRoom = function(){
                     if(!button) return;
 
                     if(sig === "clear") {
+                        myFailedState = false;
                         button.disabled = false; 
                         button.innerHTML = "🔴 BAS"; 
                         if(status) status.innerHTML = "";
                     } else if(sig) {
-                        get(ref(db, "rooms/" + code + "/pressedHistory/" + name)).then((hSnap) => {
-                            if(hSnap.exists() && hSnap.val().valid === false) {
-                                button.disabled = true; 
-                                button.innerHTML = "🔒"; 
-                            } else {
-                                button.disabled = false; 
-                                button.innerHTML = "🔴 BAS"; 
-                                if(status) status.innerHTML = "";
-                            }
-                        });
+                        if(myFailedState) {
+                            button.disabled = true; 
+                            button.innerHTML = "🔒"; 
+                        } else {
+                            button.disabled = false; 
+                            button.innerHTML = "🔴 BAS"; 
+                            if(status) status.innerHTML = "";
+                        }
                     }
                 });
 
@@ -430,7 +421,6 @@ window.startGame = function(){
     if(!code) return alert("Əvvəlcə otaq yaradın!");
     
     remove(ref(db, "rooms/" + code + "/pressed"));
-    remove(ref(db, "rooms/" + code + "/pressedHistory"));
     set(ref(db, "rooms/" + code + "/resetSignal"), "clear");
     set(ref(db, "rooms/" + code + "/gameStarted"), true);
     set(ref(db, "rooms/" + code + "/timer"), { startTime: Date.now(), status: "started" }).then(() => {
@@ -452,6 +442,7 @@ window.continueGame = function(){
         remove(ref(db, "rooms/" + code + "/pressed"));
         set(ref(db, "rooms/" + code + "/resetSignal"), Date.now()); 
         set(ref(db, "rooms/" + code + "/timer"), { status: "started", startTime: Date.now() - passed });
+        set(ref(db, "rooms/" + code + "/sound"), { type: "start", time: Date.now() });
     });
 }
 
@@ -461,7 +452,6 @@ window.resetGame = function(){
     
     set(ref(db, "rooms/" + code + "/gameStarted"), false); 
     remove(ref(db, "rooms/" + code + "/pressed"));
-    remove(ref(db, "rooms/" + code + "/pressedHistory"));
     set(ref(db, "rooms/" + code + "/timer"), { status: "stopped", startTime: 0 });
     set(ref(db, "rooms/" + code + "/resetSignal"), "clear"); 
     set(ref(db, "rooms/" + code + "/sound"), { type: "reset", time: Date.now() });
@@ -482,13 +472,14 @@ window.pressButton = function(){
             return { team: name, valid: started, time: Date.now() };
         }).then((result) => {
             if(result.committed){
-                set(ref(db, "rooms/" + code + "/pressedHistory/" + name), { valid: started });
+                update(ref(db, "rooms/" + code + "/timer"), { status: "stopped" });
                 if(started){
                     document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!"; 
                     set(ref(db, "rooms/" + code + "/sound"), { type: "press", time: Date.now() });
                     let pressSound = document.getElementById("pressSound"); 
                     if(pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
                 } else {
+                    myFailedState = true;
                     document.getElementById("teamStatus").innerHTML = "❌ FAIL START"; 
                     set(ref(db, "rooms/" + code + "/sound"), { type: "fail", time: Date.now() });
                     let failSound = document.getElementById("failSound"); 
