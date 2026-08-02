@@ -767,7 +767,7 @@ onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
 
 let sound=snapshot.val();
 
-if(sound==="start" && startSound){
+if(sound.type==="start" && startSound){
 
 startSound.currentTime=0;
 
@@ -775,14 +775,14 @@ startSound.play().catch(()=>{});
 
 }
 
-if(sound==="reset" && resetSound){
+if(sound.type==="reset" && resetSound){
 
 resetSound.currentTime=0;
 
 resetSound.play().catch(()=>{});
 
 }
-if(sound==="fail" && failSound){
+if(sound.type==="fail" && failSound){
 
 failSound.currentTime=0;
 
@@ -795,7 +795,7 @@ console.log("Fail səs xətası:",e);
 }
 
 
-if(sound==="press" && pressSound){
+if(sound.type==="press" && pressSound){
 
 pressSound.currentTime=0;
 
@@ -804,17 +804,6 @@ pressSound.play().catch((e)=>{
 console.log("Press səs xətası:",e);
 
 });
-
-}
-let failSound=document.getElementById("failSound");
-let pressSound=document.getElementById("pressSound");
-
-
-if(sound==="fail" && failSound){
-
-failSound.currentTime=0;
-
-failSound.play().catch(()=>{});
 
 }
 
@@ -870,7 +859,10 @@ console.log("START göndərildi");
 
 // iştirakçılar üçün səs siqnalı
 
-set(ref(db,"rooms/"+code+"/sound"),"start");
+set(ref(db,"rooms/"+code+"/sound"),{
+    type:"start",
+    time:Date.now()
+});
 
 
 // admin üçün səs
@@ -930,7 +922,10 @@ set(ref(db,"rooms/"+code+"/resetSignal"),Date.now());
 
 // gong siqnalı
 
-set(ref(db,"rooms/"+code+"/sound"),"reset");
+set(ref(db,"rooms/"+code+"/sound"),{
+    type:"reset",
+    time:Date.now()
+});
 
 
 // admin gong
