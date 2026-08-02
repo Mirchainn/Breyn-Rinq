@@ -130,7 +130,7 @@ input:focus, select:focus {
     box-shadow: 0 0 25px rgba(250,204,21,.25);
 }
 
-/* Qalib yazısı */
+/* Qalib yazısı (Sürətli cavabda çıxan) */
 #winner {
     font-size:35px;
     color:#38bdf8;
@@ -187,6 +187,9 @@ input:focus, select:focus {
     border-radius: 14px;
     padding: 15px;
     border: 1px solid #475569;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .score-card.green { border-color: #22c55e; }
@@ -237,6 +240,36 @@ input:focus, select:focus {
     background: linear-gradient(135deg, #ef4444, #991b1b) !important;
     font-size: 22px !important;
     border-radius: 14px !important;
+}
+
+/* YEKUN QALİB EKRANI ÜÇÜN CSS */
+#winnerOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+    z-index: 9999;
+    display: none; 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.win-text {
+    font-size: 60px;
+    margin: 20px 0;
+    color: #facc15;
+    text-shadow: 0 0 30px rgba(250, 204, 21, 0.6);
+    animation: pulse 1s infinite;
+    line-height: 1.2;
+}
+
+.lose-text {
+    font-size: 40px;
+    margin: 20px 0;
+    color: #94a3b8;
+    line-height: 1.2;
 }
 
 /* Animasiya */
@@ -300,6 +333,11 @@ input:focus, select:focus {
     <h1 id="playerTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
     <button class="team press-btn" onclick="pressButton()">🔴 BAS</button>
     <h2 id="teamStatus"></h2>
+    
+    <!-- YEKUN QALİB EKRANI -->
+    <div id="winnerOverlay">
+        <div id="winnerMessage"></div>
+    </div>
 </div>
 
 <div id="adminPanel" class="hidden">
@@ -331,7 +369,7 @@ input:focus, select:focus {
     </div>
 </div>
 
-<!-- Kompakt Xallar Səhifəsi (Zibilqabı ikonu və komanda adları ilə) -->
+<!-- Kompakt Xallar Səhifəsi -->
 <div id="scorePage" class="hidden">
     <h2>🏆 Xallar</h2>
 
@@ -339,22 +377,30 @@ input:focus, select:focus {
         <div class="score-grid">
             <!-- Yaşıl Masa -->
             <div class="score-card green">
-                <h4 id="scoreGreenName">🟢 Yaşıl Masa</h4>
-                <div class="score-num" id="greenScore">0</div>
-                <div class="score-actions">
-                    <button class="team" onclick="changeScore('green',-1)">➖</button>
-                    <button class="team" onclick="changeScore('green',1)">➕</button>
+                <div>
+                    <h4 id="scoreGreenName">🟢 Yaşıl Masa</h4>
+                    <div class="score-num" id="greenScore">0</div>
+                    <div class="score-actions">
+                        <button class="team" onclick="changeScore('green',-1)">➖</button>
+                        <button class="team" onclick="changeScore('green',1)">➕</button>
+                    </div>
                 </div>
+                <!-- Qalib Seç düyməsi -->
+                <button style="width:100%; margin:15px 0 0 0 !important; padding:12px !important; font-size:18px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:12px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('green')">🏆 Qalib Seç</button>
             </div>
 
             <!-- Qırmızı Masa -->
             <div class="score-card red">
-                <h4 id="scoreRedName">🔴 Qırmızı Masa</h4>
-                <div class="score-num" id="redScore">0</div>
-                <div class="score-actions">
-                    <button class="admin" style="background:#dc2626;" onclick="changeScore('red',-1)">➖</button>
-                    <button class="admin" style="background:#dc2626;" onclick="changeScore('red',1)">➕</button>
+                <div>
+                    <h4 id="scoreRedName">🔴 Qırmızı Masa</h4>
+                    <div class="score-num" id="redScore">0</div>
+                    <div class="score-actions">
+                        <button class="admin" style="background:#dc2626;" onclick="changeScore('red',-1)">➖</button>
+                        <button class="admin" style="background:#dc2626;" onclick="changeScore('red',1)">➕</button>
+                    </div>
                 </div>
+                <!-- Qalib Seç düyməsi -->
+                <button style="width:100%; margin:15px 0 0 0 !important; padding:12px !important; font-size:18px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:12px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('red')">🏆 Qalib Seç</button>
             </div>
         </div>
 
@@ -479,7 +525,6 @@ function listenPress(code){
                 if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
                 if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
 
-                // Xallar bölməsində komanda adlarının yenilənməsi
                 let sGreen = document.getElementById("scoreGreenName");
                 let sRed = document.getElementById("scoreRedName");
                 if(sGreen) sGreen.innerHTML = "🟢 " + green;
@@ -591,6 +636,14 @@ function joinRoom(){
                             if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
                         });
 
+                        onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
+                            let scores = snapshot.val() || { green:0, red:0 };
+                            let gPlayer = document.getElementById("greenScorePlayer");
+                            let rPlayer = document.getElementById("redScorePlayer");
+                            if(gPlayer) gPlayer.innerHTML = scores.green;
+                            if(rPlayer) rPlayer.innerHTML = scores.red;
+                        });
+
                         onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
                             let tData = snapshot.val();
                             if (tData && tData.status === "started") {
@@ -651,6 +704,40 @@ function joinRoom(){
                                         if(status) status.innerHTML = "";
                                     }
                                 }
+                            }
+                        });
+
+                        let startSound = document.getElementById("startSound");
+                        let resetSound = document.getElementById("resetSound");
+                        let failSound = document.getElementById("failSound");
+                        let pressSound = document.getElementById("pressSound");
+
+                        onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
+                            let sound = snapshot.val();
+                            if (!sound) return;
+                            if (sound.type === "start" && startSound) { startSound.currentTime = 0; startSound.play().catch(()=>{}); }
+                            if (sound.type === "reset" && resetSound) { resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
+                            if (sound.type === "fail" && failSound) { failSound.currentTime = 0; failSound.play().catch(()=>{}); }
+                            if (sound.type === "press" && pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
+                        });
+                        
+                        // Qalib E'lan Olunmasını Dinləyici
+                        onValue(ref(db,"rooms/"+code+"/globalWinner"),(snapshot)=>{
+                            let winnerColor = snapshot.val();
+                            let overlay = document.getElementById("winnerOverlay");
+                            let msg = document.getElementById("winnerMessage");
+                            
+                            if(winnerColor){
+                                overlay.style.display = "flex";
+                                if(winnerColor === color){
+                                    msg.innerHTML = "🏆 TƏBRİKLƏR! 🏆<br><span style='font-size:30px'>SİZ QALİB OLDUNUZ!</span>";
+                                    msg.className = "win-text";
+                                } else {
+                                    msg.innerHTML = "❌ OYUN BİTDİ ❌<br><span style='font-size:30px'>Rəqib komanda qalib oldu.</span>";
+                                    msg.className = "lose-text";
+                                }
+                            } else {
+                                overlay.style.display = "none";
                             }
                         });
                     });
@@ -782,9 +869,15 @@ function pressButton(){
                         if(started){
                             document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!";
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"press", time:Date.now() });
+                            
+                            let pressSound = document.getElementById("pressSound");
+                            if(pressSound){ pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
                         } else {
                             document.getElementById("teamStatus").innerHTML = "❌ FAIL START";
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"fail", time:Date.now() });
+                            
+                            let failSound = document.getElementById("failSound");
+                            if(failSound){ failSound.currentTime = 0; failSound.play().catch(()=>{}); }
                         }
                     } else {
                         document.getElementById("teamStatus").innerHTML = "⛔ Başqa komanda cavab verdi.";
@@ -828,14 +921,31 @@ function changeScore(color, amount){
     });
 }
 
-function resetScores(){
+// QALİB SEÇ funksiyası
+function declareWinner(color){
     let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
-
+    if(!confirm("Əminsiniz? Bu komanda yekun qalib elan olunacaq!")) return;
+    
     import("./firebase.js").then((module)=>{
         let db = module.db;
         import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
         .then(({ref,set})=>{
+            set(ref(db,"rooms/"+code+"/globalWinner"), color);
+            alert("Qalib elan edildi!");
+        });
+    });
+}
+
+function resetScores(){
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    if(!confirm("Xalları sıfırlamaq istəyirsiniz?")) return;
+
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,set,remove})=>{
             set(ref(db,"rooms/"+code+"/scores"),{ green:0, red:0 });
+            remove(ref(db,"rooms/"+code+"/globalWinner")); // Qalib ekranını da sıfırlayırıq
         });
     });
 }
