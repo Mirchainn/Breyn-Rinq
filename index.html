@@ -651,6 +651,24 @@ if(g) g.innerHTML = "🟢 Yaşıl: " + green;
 if(r) r.innerHTML = "🔴 Qırmızı: " + red;
 
 });
+// İştirakçı basanda adminə də səs gəlməsi üçün əlavə:
+let adminPressSound = document.getElementById("pressSound");
+let adminFailSound = document.getElementById("failSound");
+
+onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
+    let sound = snapshot.val();
+    if (!sound) return;
+
+    if (sound.type === "press" && adminPressSound) {
+        adminPressSound.currentTime = 0;
+        adminPressSound.play().catch((e) => console.log("Admin press səs xətası:", e));
+    }
+    if (sound.type === "fail" && adminFailSound) {
+        adminFailSound.currentTime = 0;
+        adminFailSound.play().catch((e) => console.log("Admin fail səs xətası:", e));
+    }
+});
+
 onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
 
 let scores = snapshot.val() || {
