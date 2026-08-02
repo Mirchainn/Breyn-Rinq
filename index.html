@@ -704,6 +704,12 @@ onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
         startLocalTimer(tData.startTime, tData.duration || 20);
     } else {
         stopLocalTimer();
+        if (tData && tData.duration !== undefined) {
+            let aTimer = document.getElementById("adminTimer");
+            let pTimer = document.getElementById("playerTimer");
+            if (aTimer) aTimer.innerHTML = tData.duration;
+            if (pTimer) pTimer.innerHTML = tData.duration;
+        }
     }
 });
 
@@ -827,6 +833,12 @@ onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
         startLocalTimer(tData.startTime, tData.duration || 20);
     } else {
         stopLocalTimer();
+        if (tData && tData.duration !== undefined) {
+            let aTimer = document.getElementById("adminTimer");
+            let pTimer = document.getElementById("playerTimer");
+            if (aTimer) aTimer.innerHTML = tData.duration;
+            if (pTimer) pTimer.innerHTML = tData.duration;
+        }
     }
 });
 
@@ -883,23 +895,31 @@ status.innerHTML=
 
 });
 
-// RESET
+// RESET VƏ NEXT SİQNALI
 
-onValue(ref(db,"rooms/"+code+"/resetSignal"),()=>{
+onValue(ref(db,"rooms/"+code+"/resetSignal"),(snapshot)=>{
+
+let signal = snapshot.val();
+if(!signal) return;
 
 let button = document.querySelector("#gamePage button");
 
 if(button){
-
-button.disabled=false;
-button.innerHTML="🔴 BAS";
-
-}
-
-if(status){
-
-status.innerHTML="";
-
+    if(signal.type === "reset"){
+        button.disabled = false;
+        button.innerHTML = "🔴 BAS";
+        if(status) status.innerHTML = "";
+    } else if(signal.type === "next"){
+        if(signal.blockedTeam === name){
+            button.disabled = true;
+            button.innerHTML = "🔒";
+            if(status) status.innerHTML = "⛔ Bu mərhələdə şansınızı itirdiniz!";
+        } else {
+            button.disabled = false;
+            button.innerHTML = "🔴 BAS";
+            if(status) status.innerHTML = "";
+        }
+    }
 }
 
 });
@@ -988,7 +1008,6 @@ let code = document.getElementById("roomDisplay").innerText
 .replace("🏠 Otaq kodu: ","")
 .trim();
 
-
 import("./firebase.js").then((module)=>{
 
 let db = module.db;
@@ -1009,6 +1028,11 @@ set(ref(db, "rooms/" + code + "/timer"), {
     startTime: Date.now(),
     duration: 20,
     status: "started"
+});
+
+set(ref(db,"rooms/"+code+"/resetSignal"),{
+    type: "reset",
+    time: Date.now()
 });
 
 // iştirakçılar üçün səs siqnalı
@@ -1056,24 +1080,52 @@ let db = module.db;
 import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,get,set,remove})=>{
 
-get(ref(db, "rooms/" + code + "/timer")).then((snapshot) => {
-    let tData = snapshot.val() || { startTime: Date.now(), duration: 20 };
-    let passed = Math.floor((Date.now() - tData.startTime) / 1000);
-    let rem = (tData.duration || 20) - passed;
-    if (rem < 0) rem = 0;
+get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
+    let pressedData = pSnap.val();
+    
+    // Əgər heç kim basmayıbsa və ya basan komanda yoxdursa NEXT işləməsin
+    if(!pressedData || !pressedData.team) {
+        alert("NEXT yalnız birinci komanda düyməyə basdıqdan sonra istifadə oluna bilər!");
+        return;
+    }
 
-    remove(ref(db, "rooms/" + code + "/pressed"));
-    set(ref(db, "rooms/" + code + "/resetSignal"), Date.now());
+    // Əgər Fail Start olubsa NEXT işləməməlidir
+    if(pressedData.valid === false) {
+        alert("Fail Start olduqda NEXT düyməsindən istifadə olunmur! RESET verib oyunu yenidən başladın.");
+        return;
+    }
 
-    set(ref(db, "rooms/" + code + "/timer"), {
-        status: "started",
-        startTime: Date.now(),
-        duration: rem
-    });
+    get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
+        let tData = tSnap.val() || { duration: 20 };
+        
+        // Qalan saniyə dəqiqliklə istifadə olunur
+        let rem = tData.duration !== undefined ? tData.duration : 20;
 
-    set(ref(db, "rooms/" + code + "/sound"), {
-        type: "start",
-        time: Date.now()
+        remove(ref(db, "rooms/" + code + "/pressed"));
+        
+        // Əvvəl basan komandanı bloklamaq üçün 'next' siqnalı veririk
+        set(ref(db, "rooms/" + code + "/resetSignal"), {
+            type: "next",
+            blockedTeam: pressedData.team,
+            time: Date.now()
+        });
+
+        set(ref(db, "rooms/" + code + "/gameStarted"), true);
+
+        // Taymer qaldığı saniyədən davam edir
+        set(ref(db, "rooms/" + code + "/timer"), {
+            status: "started",
+            startTime: Date.now(),
+            duration: rem
+        });
+
+        set(ref(db, "rooms/" + code + "/sound"), {
+            type: "start",
+            time: Date.now()
+        });
+        
+        let winner = document.getElementById("winner");
+        if(winner) winner.innerHTML = "";
     });
 });
 
@@ -1087,7 +1139,6 @@ function resetGame(){
 let code = document.getElementById("roomDisplay").innerText
 .replace("🏠 Otaq kodu: ","")
 .trim();
-
 
 import("./firebase.js").then((module)=>{
 
@@ -1117,7 +1168,10 @@ if (pT) pT.innerHTML = "20";
 
 // iştirakçılara reset göndər
 
-set(ref(db,"rooms/"+code+"/resetSignal"),Date.now());
+set(ref(db,"rooms/"+code+"/resetSignal"),{
+    type: "reset",
+    time: Date.now()
+});
 
 
 // gong siqnalı
@@ -1201,10 +1255,15 @@ if(result.committed){
 
 get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
     let tData = tSnap.val() || { startTime: Date.now(), duration: 20 };
-    let passed = Math.floor((Date.now() - tData.startTime) / 1000);
-    let rem = (tData.duration || 20) - passed;
+    
+    let rem = tData.duration || 20;
+    if(started && tData.startTime){
+        let passed = Math.floor((Date.now() - tData.startTime) / 1000);
+        rem = rem - passed;
+    }
     if (rem < 0) rem = 0;
     
+    // Düymə sıxılan kimi taymeri həmin qalan saniyədə dayandırırıq
     update(ref(db, "rooms/" + code + "/timer"), {
         status: "stopped",
         duration: rem
