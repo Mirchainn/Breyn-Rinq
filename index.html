@@ -4,19 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Brain Ring</title>
+<title>Brain Ring - Studio Edition</title>
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin:0;
-    font-family:"Arial", sans-serif;
-    background:
-    radial-gradient(circle at top,#334155,#020617 70%);
+    font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: radial-gradient(circle at top,#334155,#020617 70%);
     color:white;
     text-align:center;
     min-height:100vh;
 }
-
 
 .box {
     padding:25px;
@@ -24,504 +26,350 @@ body {
     margin:auto;
 }
 
-
 /* Başlıqlar */
-
 h1 {
-
     font-size:55px;
     margin:35px 0;
-
     background:linear-gradient(90deg,#38bdf8,#818cf8,#f472b6);
     -webkit-background-clip:text;
     color:transparent;
-
     letter-spacing:2px;
-
+    filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4));
 }
-
 
 h2 {
-
     font-size:32px;
     margin:25px;
-
 }
-
 
 h3 {
-
     font-size:28px;
     color:#facc15;
-
 }
-
 
 /* Düymələr */
-
 button {
-
     width:90%;
     max-width:420px;
-
     padding:22px;
-
     margin:15px;
-
     border:none;
-
     border-radius:25px;
-
     font-size:25px;
-
     font-weight:800;
-
     color:white;
-
     cursor:pointer;
-
     transition:0.25s;
-
-    box-shadow:
-    0 12px 30px rgba(0,0,0,.45);
-
+    box-shadow: 0 12px 30px rgba(0,0,0,.45);
 }
-
 
 button:hover {
-
     transform:translateY(-3px);
-
 }
-
 
 button:active {
-
     transform:scale(.94);
-
 }
-
 
 /* Admin düyməsi */
-
 .admin {
-
-    background:
-    linear-gradient(135deg,#22c55e,#15803d);
-
+    background: linear-gradient(135deg,#22c55e,#15803d);
 }
-
 
 /* Komanda düyməsi */
-
 .team {
-
-    background:
-    linear-gradient(135deg,#2563eb,#1e40af);
-
+    background: linear-gradient(135deg,#2563eb,#1e40af);
 }
+
 /* Köməkçi düymələr */
 .soundBtn {
-
     background: linear-gradient(135deg,#64748b,#334155) !important;
     color:white !important;
-
 }
 
-
 .backBtn {
-
     background: linear-gradient(135deg,#64748b,#334155) !important;
     color:white !important;
-
 }
 
 /* Inputlar */
-
-input {
-
+input, select {
     width:80%;
     max-width:380px;
-
     padding:18px;
-
     margin:12px;
-
-    border:none;
-
+    border:2px solid #334155;
     border-radius:18px;
-
-    background:#f8fafc;
-
-    color:#111827;
-
+    background:#0f172a;
+    color:#fff;
     font-size:20px;
-
     text-align:center;
-
     outline:none;
-
 }
 
+input:focus, select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
 
 /* Gizli hissə */
-
 .hidden {
-
     display:none;
-
 }
-
 
 /* Otaq kodu */
-
 #roomDisplay {
-
     display:inline-block;
-
     padding:15px 25px;
-
     border-radius:20px;
-
     background:#0f172a;
-
     color:#facc15;
-
     font-size:35px;
-
     margin:20px;
-
-    box-shadow:
-    0 0 25px rgba(250,204,21,.25);
-
+    border: 1px solid #facc15;
+    box-shadow: 0 0 25px rgba(250,204,21,.25);
 }
-
 
 /* Qalib yazısı */
-
 #winner {
-
     font-size:35px;
-
     color:#38bdf8;
-
     margin:25px;
-
     animation:pulse 1s infinite;
-
 }
-
 
 /* Status */
-
 #teamStatus {
-
     font-size:30px;
-
     margin:25px;
-
     font-weight:bold;
-
 }
-
 
 /* BAS düyməsi */
-
-#gamePage button {
-
+#gamePage button.press-btn {
     width:230px;
-
     height:230px;
-
     border-radius:50%;
-
     font-size:45px;
-
-    background:
-
-    radial-gradient(circle at 30% 25%,
-    #f87171,
-    #dc2626 50%,
-    #7f1d1d);
-
-    box-shadow:
-
-    0 0 40px rgba(239,68,68,.7),
-
-    inset 0 0 25px rgba(255,255,255,.25);
-
+    background: radial-gradient(circle at 30% 25%, #f87171, #dc2626 50%, #7f1d1d);
+    box-shadow: 0 0 40px rgba(239,68,68,.7), inset 0 0 25px rgba(255,255,255,.25);
+    border: 4px solid #ef4444;
 }
 
-
-#gamePage button:active {
-
-    box-shadow:
-
-    0 0 10px rgba(239,68,68,.5);
-
+#gamePage button.press-btn:disabled {
+    background: radial-gradient(circle at 30% 25%, #64748b, #334155 50%, #0f172a);
+    box-shadow: none;
+    border-color: #475569;
+    cursor: not-allowed;
 }
 
+/* Stüdyo Məlumat Kartları və Xallar Grid Sistemi */
+.info-card {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #334155;
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    padding: 18px;
+    margin: 15px auto;
+    max-width: 450px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
 
+.score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.score-card {
+    background: rgba(30, 41, 59, 0.9);
+    border-radius: 14px;
+    padding: 15px;
+    border: 1px solid #475569;
+}
+
+.score-card.green { border-color: #22c55e; }
+.score-card.red { border-color: #ef4444; }
+
+.score-card h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #cbd5e1;
+}
+
+.score-card .score-num {
+    font-size: 36px;
+    font-weight: 900;
+    margin: 8px 0;
+    color: #f8fafc;
+}
+
+.score-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.score-actions button {
+    width: auto !important;
+    padding: 10px 16px !important;
+    margin: 0 !important;
+    font-size: 18px !important;
+    border-radius: 10px !important;
+}
+
+.score-footer {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.reset-trash-btn {
+    width: auto !important;
+    padding: 18px 24px !important;
+    margin: 0 !important;
+    background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+    font-size: 22px !important;
+    border-radius: 14px !important;
+}
 
 /* Animasiya */
-
 @keyframes pulse {
-
-0% {
-    transform:scale(1);
+    0% { transform:scale(1); }
+    50% { transform:scale(1.05); }
+    100% { transform:scale(1); }
 }
-
-50% {
-    transform:scale(1.05);
-}
-
-100% {
-    transform:scale(1);
-}
-
-}
-
-
 </style>
 </head>
-
 
 <body>
 
 <div class="box">
 
-
 <div id="main">
-
-<h1>🧠 Brain Ring</h1>
-
-<button class="admin" onclick="showAdmin()">
-👑 Aparıcı
-</button>
-
-<br>
-
-<button class="team" onclick="showTeam()">
-👥 Komanda
-</button>
-
+    <h1>🧠 Brain Ring</h1>
+    <button class="admin" onclick="showAdmin()">👑 Aparıcı</button>
+    <br>
+    <button class="team" onclick="showTeam()">👥 Komanda</button>
 </div>
-
-
 
 <div id="adminPage" class="hidden">
-
-<h2>👑 Admin giriş</h2>
-
-<input id="password" type="password" placeholder="Şifrə">
-
-<br>
-
-<button class="admin" onclick="loginAdmin()">
-DAXİL OL
-</button>
-<button class="backBtn" onclick="goHome()">
-⬅️ Geri
-</button>
-
+    <h2>👑 Admin giriş</h2>
+    <input id="password" type="password" placeholder="Şifrə">
+    <br>
+    <button class="admin" onclick="loginAdmin()">DAXİL OL</button>
+    <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
 </div>
-
-
-
 
 <div id="teamPage" class="hidden">
-
-<h2>👥 Komanda</h2>
-
-<input id="teamName" placeholder="Komanda adı">
-
-<br>
-
-<input id="roomCode" placeholder="Otaq kodu">
-
-<br>
-
-<select id="teamColor" style="
-width:80%;
-max-width:380px;
-padding:18px;
-margin:12px;
-border:none;
-border-radius:18px;
-font-size:20px;
-text-align:center;">
-
-<option value="green">🟢 Yaşıl masa</option>
-<option value="red">🔴 Qırmızı masa</option>
-
-</select>
-
-<br>
-
-<button class="soundBtn" onclick="unlockSound()">
-🔊 SƏSİ YOXLA
-</button>
-
-<button class="team" onclick="joinRoom()">
-QOŞUL
-</button>
-<button class="backBtn" onclick="goHome()">
-⬅️ Geri
-</button>
-
+    <h2>👥 Komanda</h2>
+    <input id="teamName" placeholder="Komanda adı">
+    <br>
+    <input id="roomCode" placeholder="Otaq kodu">
+    <br>
+    <select id="teamColor">
+        <option value="green">🟢 Yaşıl masa</option>
+        <option value="red">🔴 Qırmızı masa</option>
+    </select>
+    <br>
+    <button class="soundBtn" onclick="unlockSound()">🔊 SƏSİ YOXLA</button>
+    <button class="team" onclick="joinRoom()">QOŞUL</button>
+    <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
 </div>
+
 <div id="gamePage" class="hidden">
+    <h2 id="myTeam"></h2>
+    
+    <div class="info-card">
+        <div style="display:flex; justify-content:space-around; font-size:18px; font-weight:bold;">
+            <div id="greenTeamPlayer">🟢 Yaşıl: -</div>
+            <div id="redTeamPlayer">🔴 Qırmızı: -</div>
+        </div>
+        <hr style="border-color:#334155; margin:12px 0;">
+        <div style="font-size:24px; font-weight:900;">
+            🟢 <span id="greenScorePlayer">0</span> &nbsp;&nbsp;:&nbsp;&nbsp; <span id="redScorePlayer">0</span> 🔴
+        </div>
+    </div>
 
-<h2 id="myTeam"></h2>
-<div id="teamsTablePlayer" style="
-margin:12px auto;
-max-width:320px;
-background:#0f172a;
-border-radius:12px;
-padding:10px;
-font-size:18px;
-font-weight:bold;
-line-height:1.6;
-box-shadow:0 0 15px rgba(255,255,255,.08);
-">
-
-<div id="greenTeamPlayer">
-🟢 Yaşıl: -
+    <h1 id="playerTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
+    <button class="team press-btn" onclick="pressButton()">🔴 BAS</button>
+    <h2 id="teamStatus"></h2>
 </div>
-
-<div id="redTeamPlayer">
-🔴 Qırmızı: -
-</div>
-
-</div>
-<div id="scoreBoardPlayer" style="
-margin:15px auto;
-max-width:300px;
-background:#0f172a;
-border-radius:12px;
-padding:12px;
-font-size:22px;
-font-weight:bold;
-box-shadow:0 0 15px rgba(255,255,255,.08);
-">
-
-🟢 <span id="greenScorePlayer">0</span>
-
-&nbsp;&nbsp;:
-
-&nbsp;&nbsp;
-
-<span id="redScorePlayer">0</span> 🔴
-
-</div>
-<h1 id="playerTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
-<button class="team" onclick="pressButton()" style="height:200px;font-size:40px;">
-🔴 BAS
-</button>
-<h2 id="teamStatus"></h2>
-</div>
-
 
 <div id="adminPanel" class="hidden">
+    <h2>👑 Admin panel</h2>
+    <button class="admin" onclick="createRoom()">OTAQ YARAT</button>
+    
+    <br>
+    <h3 id="roomDisplay" class="hidden"></h3>
 
-<h2>👑 Admin panel</h2>
+    <div class="info-card">
+        <div style="display:flex; justify-content:space-around; font-size:18px; font-weight:bold;">
+            <div id="greenTeam">🟢 Yaşıl: -</div>
+            <div id="redTeam">🔴 Qırmızı: -</div>
+        </div>
+    </div>
 
-<button class="admin" onclick="createRoom()">
-OTAQ YARAT
-</button>
+    <h2 id="winner"></h2>
+    <br>
 
-<h3 id="roomDisplay"></h3>
-<div id="teamsTable" style="
-margin:12px auto;
-max-width:320px;
-background:#0f172a;
-border-radius:12px;
-padding:10px;
-font-size:18px;
-font-weight:bold;
-line-height:1.6;
-box-shadow:0 0 15px rgba(255,255,255,.08);
-">
-
-<div id="greenTeam">
-🟢 Yaşıl: -
+    <h1 id="adminTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
+    
+    <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+        <button class="admin" style="width:42%; margin:5px;" onclick="startGame()">START</button>
+        <button class="admin" style="width:42%; margin:5px; background:linear-gradient(135deg,#eab308,#ca8a04);" onclick="continueGame()">NEXT</button>
+    </div>
+    <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+        <button class="admin" style="width:42%; margin:5px; background:linear-gradient(135deg,#ef4444,#b91c1c);" onclick="resetGame()">RESET</button>
+        <button class="admin" style="width:42%; margin:5px; background:linear-gradient(135deg,#8b5cf6,#6d28d9);" onclick="showScores()">🏆 XALLAR</button>
+    </div>
 </div>
 
-<div id="redTeam">
-🔴 Qırmızı: -
-</div>
-
-</div>
-<h2 id="winner"></h2>
-<br>
-
-<h1 id="adminTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
-<button class="admin" onclick="startGame()">
-START
-</button>
-<button class="admin" onclick="continueGame()">
-NEXT
-</button>
-<button class="admin" onclick="resetGame()">
-RESET
-</button>
-<button class="admin" onclick="showScores()">
-🏆 XALLAR
-</button>
-</div>
+<!-- Kompakt Xallar Səhifəsi (Zibilqabı ikonu və komanda adları ilə) -->
 <div id="scorePage" class="hidden">
+    <h2>🏆 Xallar</h2>
 
-<h2>🏆 Xallar</h2>
+    <div class="info-card">
+        <div class="score-grid">
+            <!-- Yaşıl Masa -->
+            <div class="score-card green">
+                <h4 id="scoreGreenName">🟢 Yaşıl Masa</h4>
+                <div class="score-num" id="greenScore">0</div>
+                <div class="score-actions">
+                    <button class="team" onclick="changeScore('green',-1)">➖</button>
+                    <button class="team" onclick="changeScore('green',1)">➕</button>
+                </div>
+            </div>
 
-<div style="
-margin:20px auto;
-max-width:350px;
-background:#0f172a;
-padding:20px;
-border-radius:15px;">
+            <!-- Qırmızı Masa -->
+            <div class="score-card red">
+                <h4 id="scoreRedName">🔴 Qırmızı Masa</h4>
+                <div class="score-num" id="redScore">0</div>
+                <div class="score-actions">
+                    <button class="admin" style="background:#dc2626;" onclick="changeScore('red',-1)">➖</button>
+                    <button class="admin" style="background:#dc2626;" onclick="changeScore('red',1)">➕</button>
+                </div>
+            </div>
+        </div>
 
-<h3>🟢 Yaşıl Komanda</h3>
-
-<h2 id="greenScore">0</h2>
-
-<button class="team" onclick="changeScore('green',-1)">➖</button>
-
-<button class="team" onclick="changeScore('green',1)">➕</button>
-
-<hr style="margin:25px 0;">
-
-<h3>🔴 Qırmızı Komanda</h3>
-
-<h2 id="redScore">0</h2>
-
-<button class="admin" onclick="changeScore('red',-1)">➖</button>
-
-<button class="admin" onclick="changeScore('red',1)">➕</button>
-
-<br><br>
-
-<button class="admin" onclick="resetScores()">
-🗑️ XALLARI SIFIRLA
-</button>
-
-<br>
-
-<button class="backBtn" onclick="backToAdmin()">
-⬅️ Geri
-</button>
-
+        <div class="score-footer">
+            <button class="backBtn" onclick="backToAdmin()">⬅️ Geri</button>
+            <button class="reset-trash-btn" onclick="resetScores()" title="Xalları Sıfırla">🗑️</button>
+        </div>
+    </div>
 </div>
 
-</div>
 <div id="status"></div>
 
-
 </div>
 
-
-
 <script>
-
 let timerInterval = null;
 
 function startLocalTimer(startTime, duration = 20) {
@@ -544,904 +392,474 @@ function stopLocalTimer() {
     if (timerInterval) clearInterval(timerInterval);
 }
 
-
 function hideAll(){
-
-document.getElementById("main").style.display="none";
-document.getElementById("adminPage").style.display="none";
-document.getElementById("teamPage").style.display="none";
-document.getElementById("adminPanel").style.display="none";
-
+    document.getElementById("main").style.display="none";
+    document.getElementById("adminPage").style.display="none";
+    document.getElementById("teamPage").style.display="none";
+    document.getElementById("adminPanel").style.display="none";
+    document.getElementById("gamePage").style.display="none";
+    document.getElementById("scorePage").style.display="none";
 }
-
-
 
 function showAdmin(){
-
-hideAll();
-
-document.getElementById("adminPage").style.display="block";
-
+    hideAll();
+    document.getElementById("adminPage").style.display="block";
 }
-
-
 
 function showTeam(){
-
-hideAll();
-
-document.getElementById("teamPage").style.display="block";
-
+    hideAll();
+    document.getElementById("teamPage").style.display="block";
 }
-
-
 
 function loginAdmin(){
-
-let pass=document.getElementById("password").value;
-
-
-if(pass==="TMGRT"){
-
-hideAll();
-
-document.getElementById("adminPanel").style.display="block";
-
+    let pass=document.getElementById("password").value;
+    if(pass==="TMGRT"){
+        hideAll();
+        document.getElementById("adminPanel").style.display="block";
+    } else {
+        alert("Səhv şifrə");
+    }
 }
 
-else{
-
-alert("Səhv şifrə");
-
-}
-
-}
 function createRoom(){
-
-let code = Math.floor(1000 + Math.random()*9000);
-
-document.getElementById("roomDisplay").innerHTML =
-"🏠 Otaq kodu: " + code;
-listenPress(code);
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set})=>{
-
-set(ref(db, "rooms/" + code), {
-active: true,
-created: Date.now(),
-
-scores: {
-green: 0,
-red: 0
+    let code = Math.floor(1000 + Math.random()*9000);
+    let rDisp = document.getElementById("roomDisplay");
+    rDisp.style.display = "inline-block";
+    rDisp.innerHTML = "🏠 Otaq kodu: " + code;
+    listenPress(code);
+    
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,set})=>{
+            set(ref(db, "rooms/" + code), {
+                active: true,
+                created: Date.now(),
+                scores: { green: 0, red: 0 }
+            });
+        });
+    });
 }
-});
 
-});
-
-});
-
-}
 function listenPress(code){
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,onValue})=>{
+            
+            onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
+                let data = snapshot.val();
+                if(data){
+                    stopLocalTimer();
+                    if(data.valid === true){
+                        document.getElementById("winner").innerHTML = "🔴 " + data.team + " BASDI!";
+                    }else{
+                        document.getElementById("winner").innerHTML = "⚠️ " + data.team + " FAIL";
+                    }
+                }
+            });
 
-import("./firebase.js").then((module)=>{
+            onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
+                let teams = snapshot.val() || {};
+                let green = "-";
+                let red = "-";
 
-let db = module.db;
+                for(let team in teams){
+                    if(teams[team].table==="green") green = team;
+                    if(teams[team].table==="red") red = team;
+                }
 
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,onValue})=>{
+                let g = document.getElementById("greenTeam");
+                let r = document.getElementById("redTeam");
+                if(g) g.innerHTML = "🟢 Yaşıl: " + green;
+                if(r) r.innerHTML = "🔴 Qırmızı: " + red;
 
-onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
+                let g2 = document.getElementById("greenTeamPlayer");
+                let r2 = document.getElementById("redTeamPlayer");
+                if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
+                if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
 
-let data = snapshot.val();
+                // Xallar bölməsində komanda adlarının yenilənməsi
+                let sGreen = document.getElementById("scoreGreenName");
+                let sRed = document.getElementById("scoreRedName");
+                if(sGreen) sGreen.innerHTML = "🟢 " + green;
+                if(sRed) sRed.innerHTML = "🔴 " + red;
+            });
 
-if(data){
-stopLocalTimer();
+            onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
+                let scores = snapshot.val() || { green:0, red:0 };
+                let gScore = document.getElementById("greenScore");
+                let rScore = document.getElementById("redScore");
+                if(gScore) gScore.innerHTML = scores.green;
+                if(rScore) rScore.innerHTML = scores.red;
+                
+                let gPlayer = document.getElementById("greenScorePlayer");
+                let rPlayer = document.getElementById("redScorePlayer");
+                if(gPlayer) gPlayer.innerHTML = scores.green;
+                if(rPlayer) rPlayer.innerHTML = scores.red;
+            });
 
-if(data.valid === true){
+            onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+                let tData = snapshot.val();
+                if (tData && tData.status === "started") {
+                    startLocalTimer(tData.startTime, tData.duration || 20);
+                } else {
+                    stopLocalTimer();
+                    if (tData && tData.duration !== undefined) {
+                        let aTimer = document.getElementById("adminTimer");
+                        let pTimer = document.getElementById("playerTimer");
+                        if (aTimer) aTimer.innerHTML = tData.duration;
+                        if (pTimer) pTimer.innerHTML = tData.duration;
+                    }
+                }
+            });
 
-document.getElementById("winner").innerHTML =
-"🔴 " + data.team + " BASDI!";
+            let startSound = document.getElementById("startSound");
+            let resetSound = document.getElementById("resetSound");
+            let failSound = document.getElementById("failSound");
+            let pressSound = document.getElementById("pressSound");
 
-}else{
-
-document.getElementById("winner").innerHTML =
-"⚠️ " + data.team + " FAIL";
-
+            onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
+                let sound = snapshot.val();
+                if (!sound) return;
+                if (sound.type === "start" && startSound) { startSound.currentTime = 0; startSound.play().catch(()=>{}); }
+                if (sound.type === "reset" && resetSound) { resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
+                if (sound.type === "fail" && failSound) { failSound.currentTime = 0; failSound.play().catch(()=>{}); }
+                if (sound.type === "press" && pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
+            });
+        });
+    });
 }
 
-}
-
-});
-onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
-
-let teams = snapshot.val() || {};
-
-let green = "-";
-let red = "-";
-
-for(let team in teams){
-
-if(teams[team].table==="green") green = team;
-
-if(teams[team].table==="red") red = team;
-
-}
-
-let g = document.getElementById("greenTeam");
-let r = document.getElementById("redTeam");
-
-if(g) g.innerHTML = "🟢 Yaşıl: " + green;
-if(r) r.innerHTML = "🔴 Qırmızı: " + red;
-
-});
-onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
-
-let scores = snapshot.val() || {
-green:0,
-red:0
-};
-
-let gScore = document.getElementById("greenScore");
-let rScore = document.getElementById("redScore");
-
-if(gScore) gScore.innerHTML = scores.green;
-if(rScore) rScore.innerHTML = scores.red;
-let gPlayer = document.getElementById("greenScorePlayer");
-let rPlayer = document.getElementById("redScorePlayer");
-
-if(gPlayer) gPlayer.innerHTML = scores.green;
-if(rPlayer) rPlayer.innerHTML = scores.red;
-});
-
-// ADMIN ÜÇÜN TAYMER VƏ SƏS
-onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
-    let tData = snapshot.val();
-    if (tData && tData.status === "started") {
-        startLocalTimer(tData.startTime, tData.duration || 20);
-    } else {
-        stopLocalTimer();
-        if (tData && tData.duration !== undefined) {
-            let aTimer = document.getElementById("adminTimer");
-            let pTimer = document.getElementById("playerTimer");
-            if (aTimer) aTimer.innerHTML = tData.duration;
-            if (pTimer) pTimer.innerHTML = tData.duration;
-        }
-    }
-});
-
-let startSound = document.getElementById("startSound");
-let resetSound = document.getElementById("resetSound");
-let failSound = document.getElementById("failSound");
-let pressSound = document.getElementById("pressSound");
-
-onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
-    let sound = snapshot.val();
-    if (!sound) return;
-    if (sound.type === "start" && startSound) { startSound.currentTime = 0; startSound.play().catch(()=>{}); }
-    if (sound.type === "reset" && resetSound) { resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
-    if (sound.type === "fail" && failSound) { failSound.currentTime = 0; failSound.play().catch(()=>{}); }
-    if (sound.type === "press" && pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
-});
-
-});
-
-});
-
-}
 function joinRoom(){
+    let name = document.getElementById("teamName").value;
+    let code = document.getElementById("roomCode").value;
+    let color = document.getElementById("teamColor").value;
 
-let name = document.getElementById("teamName").value;
-let code = document.getElementById("roomCode").value;
-let color = document.getElementById("teamColor").value;
-
-if(name==="" || code===""){
-alert("Ad və otaq kodunu yaz");
-return;
-}
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,set,onValue})=>{
-
-get(ref(db,"rooms/"+code))
-.then((snapshot)=>{
-
-if(snapshot.exists()){
-
-get(ref(db,"rooms/"+code+"/teams"))
-.then((teamSnapshot)=>{
-
-let teams = teamSnapshot.val() || {};
-
-for(let team in teams){
-
-if(teams[team].table === color){
-
-alert("⚠️ Bu masa artıq tutulub!");
-return;
-
-}
-
-}
-
-// masa boşdur, davam edir
-
-document.getElementById("teamPage").style.display="none";
-
-document.getElementById("gamePage").style.display="block";
-
-set(ref(db,"rooms/"+code+"/teams/"+name),{
-table:color
-});
-
-document.getElementById("myTeam").innerHTML =
-(color==="green" ? "🟢 " : "🔴 ") + name;
-
-let playButton = document.querySelector("#gamePage button");
-
-if(color==="green"){
-
-playButton.style.background =
-"radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
-
-playButton.style.boxShadow =
-"0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
-
-}
-
-let status = document.getElementById("teamStatus");
-onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
-
-let teams = snapshot.val() || {};
-
-let green = "-";
-let red = "-";
-
-for(let team in teams){
-
-if(teams[team].table==="green") green = team;
-
-if(teams[team].table==="red") red = team;
-
-}
-
-let g1 = document.getElementById("greenTeam");
-let r1 = document.getElementById("redTeam");
-
-if(g1) g1.innerHTML = "🟢 Yaşıl: " + green;
-if(r1) r1.innerHTML = "🔴 Qırmızı: " + red;
-
-let g2 = document.getElementById("greenTeamPlayer");
-let r2 = document.getElementById("redTeamPlayer");
-
-if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
-if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
-
-});
-
-// TAYMER DİNƏMƏSİ
-onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
-    let tData = snapshot.val();
-    if (tData && tData.status === "started") {
-        startLocalTimer(tData.startTime, tData.duration || 20);
-    } else {
-        stopLocalTimer();
-        if (tData && tData.duration !== undefined) {
-            let aTimer = document.getElementById("adminTimer");
-            let pTimer = document.getElementById("playerTimer");
-            if (aTimer) aTimer.innerHTML = tData.duration;
-            if (pTimer) pTimer.innerHTML = tData.duration;
-        }
+    if(name==="" || code===""){
+        alert("Ad və otaq kodunu yaz");
+        return;
     }
-});
 
-// BAS NƏTİCƏSİ
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,get,set,onValue})=>{
+            get(ref(db,"rooms/"+code)).then((snapshot)=>{
+                if(snapshot.exists()){
+                    get(ref(db,"rooms/"+code+"/teams")).then((teamSnapshot)=>{
+                        let teams = teamSnapshot.val() || {};
+                        for(let team in teams){
+                            if(teams[team].table === color){
+                                alert("⚠️ Bu masa artıq tutulub!");
+                                return;
+                            }
+                        }
 
-onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
+                        document.getElementById("teamPage").style.display="none";
+                        document.getElementById("gamePage").style.display="block";
 
-let data = snapshot.val();
+                        set(ref(db,"rooms/"+code+"/teams/"+name),{ table:color });
 
-let button = document.querySelector("#gamePage button");
+                        document.getElementById("myTeam").innerHTML = (color==="green" ? "🟢 " : "🔴 ") + name;
 
-if(data){
-stopLocalTimer();
+                        let playButton = document.querySelector("#gamePage button.press-btn");
+                        if(color==="green"){
+                            playButton.style.background = "radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
+                            playButton.style.boxShadow = "0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
+                            playButton.style.borderColor = "#22c55e";
+                        }
 
-if(button){
+                        let status = document.getElementById("teamStatus");
+                        
+                        onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
+                            let teams = snapshot.val() || {};
+                            let green = "-";
+                            let red = "-";
+                            for(let team in teams){
+                                if(teams[team].table==="green") green = team;
+                                if(teams[team].table==="red") red = team;
+                            }
+                            let g1 = document.getElementById("greenTeam");
+                            let r1 = document.getElementById("redTeam");
+                            if(g1) g1.innerHTML = "🟢 Yaşıl: " + green;
+                            if(r1) r1.innerHTML = "🔴 Qırmızı: " + red;
 
-button.disabled=true;
-button.innerHTML="🔒";
+                            let g2 = document.getElementById("greenTeamPlayer");
+                            let r2 = document.getElementById("redTeamPlayer");
+                            if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
+                            if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
+                        });
 
+                        onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+                            let tData = snapshot.val();
+                            if (tData && tData.status === "started") {
+                                startLocalTimer(tData.startTime, tData.duration || 20);
+                            } else {
+                                stopLocalTimer();
+                                if (tData && tData.duration !== undefined) {
+                                    let aTimer = document.getElementById("adminTimer");
+                                    let pTimer = document.getElementById("playerTimer");
+                                    if (aTimer) aTimer.innerHTML = tData.duration;
+                                    if (pTimer) pTimer.innerHTML = tData.duration;
+                                }
+                            }
+                        });
+
+                        onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
+                            let data = snapshot.val();
+                            let button = document.querySelector("#gamePage button.press-btn");
+                            if(data){
+                                stopLocalTimer();
+                                if(button){
+                                    button.disabled=true;
+                                    button.innerHTML="🔒";
+                                }
+                                if(data.valid===false){
+                                    if(data.team===name){
+                                        status.innerHTML="❌ FAIL START";
+                                    } else {
+                                        status.innerHTML="❌ "+data.team+" FAIL START etdi!";
+                                    }
+                                } else if(data.valid===true){
+                                    if(data.team===name){
+                                        status.innerHTML="✅ Siz ilk basdınız!";
+                                    } else {
+                                        status.innerHTML="🔴 "+data.team+" artıq basdı!";
+                                    }
+                                }
+                            }
+                        });
+
+                        onValue(ref(db,"rooms/"+code+"/resetSignal"),(snapshot)=>{
+                            let signal = snapshot.val();
+                            if(!signal) return;
+                            let button = document.querySelector("#gamePage button.press-btn");
+                            if(button){
+                                if(signal.type === "reset"){
+                                    button.disabled = false;
+                                    button.innerHTML = "🔴 BAS";
+                                    if(status) status.innerHTML = "";
+                                } else if(signal.type === "next"){
+                                    if(signal.blockedTeam === name){
+                                        button.disabled = true;
+                                        button.innerHTML = "🔒";
+                                        if(status) status.innerHTML = "⛔ Bu mərhələdə şansınızı itirdiniz!";
+                                    } else {
+                                        button.disabled = false;
+                                        button.innerHTML = "🔴 BAS";
+                                        if(status) status.innerHTML = "";
+                                    }
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    alert("Belə otaq yoxdur");
+                }
+            });
+        });
+    });
 }
 
-if(data.valid===false){
-
-if(data.team===name){
-
-status.innerHTML="❌ FAIL START";
-
-}
-else{
-
-status.innerHTML=
-"❌ "+data.team+" FAIL START etdi!";
-
-}
-
-}
-
-else if(data.valid===true){
-
-if(data.team===name){
-
-status.innerHTML="✅ Siz ilk basdınız!";
-
-}
-else{
-
-status.innerHTML=
-"🔴 "+data.team+" artıq basdı!";
-
-}
-
-}
-}
-
-});
-
-// RESET VƏ NEXT SİQNALI
-
-onValue(ref(db,"rooms/"+code+"/resetSignal"),(snapshot)=>{
-
-let signal = snapshot.val();
-if(!signal) return;
-
-let button = document.querySelector("#gamePage button");
-
-if(button){
-    if(signal.type === "reset"){
-        button.disabled = false;
-        button.innerHTML = "🔴 BAS";
-        if(status) status.innerHTML = "";
-    } else if(signal.type === "next"){
-        if(signal.blockedTeam === name){
-            button.disabled = true;
-            button.innerHTML = "🔒";
-            if(status) status.innerHTML = "⛔ Bu mərhələdə şansınızı itirdiniz!";
-        } else {
-            button.disabled = false;
-            button.innerHTML = "🔴 BAS";
-            if(status) status.innerHTML = "";
-        }
-    }
-}
-
-});
-
-// SƏS
-
-let startSound=document.getElementById("startSound");
-let resetSound=document.getElementById("resetSound");
-let failSound=document.getElementById("failSound");
-let pressSound=document.getElementById("pressSound");
-
-onValue(ref(db,"rooms/"+code+"/sound"),(snapshot)=>{
-
-let sound=snapshot.val();
-
-if(sound.type==="start" && startSound){
-
-startSound.currentTime=0;
-
-startSound.play().catch(()=>{});
-
-}
-
-if(sound.type==="reset" && resetSound){
-
-resetSound.currentTime=0;
-
-resetSound.play().catch(()=>{});
-
-}
-if(sound.type==="fail" && failSound){
-
-failSound.currentTime=0;
-
-failSound.play().catch((e)=>{
-
-console.log("Fail səs xətası:",e);
-
-});
-
-}
-
-
-if(sound.type==="press" && pressSound){
-
-pressSound.currentTime=0;
-
-pressSound.play().catch((e)=>{
-
-console.log("Press səs xətası:",e);
-
-});
-
-}
-
-
-if(sound==="press" && pressSound){
-
-pressSound.currentTime=0;
-
-pressSound.play().catch(()=>{});
-
-}
-});
-
-});
-
-}
-
-else{
-
-alert("Belə otaq yoxdur");
-
-}
-
-});
-
-});
-
-});
-
-}
 function startGame(){
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
-let code = document.getElementById("roomDisplay").innerText
-.replace("🏠 Otaq kodu: ","")
-.trim();
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set,remove})=>{
-
-remove(ref(db, "rooms/" + code + "/pressed"));
-
-set(ref(db,"rooms/"+code+"/gameStarted"),true)
-.then(()=>{
-
-
-console.log("START göndərildi");
-
-set(ref(db, "rooms/" + code + "/timer"), {
-    startTime: Date.now(),
-    duration: 20,
-    status: "started"
-});
-
-set(ref(db,"rooms/"+code+"/resetSignal"),{
-    type: "reset",
-    time: Date.now()
-});
-
-// iştirakçılar üçün səs siqnalı
-
-set(ref(db,"rooms/"+code+"/sound"),{
-    type:"start",
-    time:Date.now()
-});
-
-
-// admin üçün səs
-
-let startSound = document.getElementById("startSound");
-
-if(startSound){
-
-startSound.currentTime = 0;
-
-startSound.play()
-.catch(()=>{});
-
-}
-
-
-});
-
-
-});
-
-
-});
-
-
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,set,remove})=>{
+            remove(ref(db, "rooms/" + code + "/pressed"));
+            set(ref(db,"rooms/"+code+"/gameStarted"),true).then(()=>{
+                set(ref(db, "rooms/" + code + "/timer"), { startTime: Date.now(), duration: 20, status: "started" });
+                set(ref(db,"rooms/"+code+"/resetSignal"),{ type: "reset", time: Date.now() });
+                set(ref(db,"rooms/"+code+"/sound"),{ type:"start", time:Date.now() });
+                
+                let startSound = document.getElementById("startSound");
+                if(startSound){
+                    startSound.currentTime = 0;
+                    startSound.play().catch(()=>{});
+                }
+            });
+        });
+    });
 }
 
 function continueGame(){
-let code = document.getElementById("roomDisplay").innerText
-.replace("🏠 Otaq kodu: ","")
-.trim();
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
-import("./firebase.js").then((module)=>{
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,get,set,remove})=>{
+            get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
+                let pressedData = pSnap.val();
+                if(!pressedData || !pressedData.team) {
+                    alert("NEXT yalnız birinci komanda düyməyə basdıqdan sonra istifadə oluna bilər!");
+                    return;
+                }
+                if(pressedData.valid === false) {
+                    alert("Fail Start olduqda NEXT düyməsindən istifadə olunmur! RESET verib oyunu yenidən başladın.");
+                    return;
+                }
 
-let db = module.db;
+                get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
+                    let tData = tSnap.val() || { duration: 20 };
+                    let rem = tData.duration !== undefined ? tData.duration : 20;
 
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,set,remove})=>{
-
-get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
-    let pressedData = pSnap.val();
-    
-    // Əgər heç kim basmayıbsa və ya basan komanda yoxdursa NEXT işləməsin
-    if(!pressedData || !pressedData.team) {
-        alert("NEXT yalnız birinci komanda düyməyə basdıqdan sonra istifadə oluna bilər!");
-        return;
-    }
-
-    // Əgər Fail Start olubsa NEXT işləməməlidir
-    if(pressedData.valid === false) {
-        alert("Fail Start olduqda NEXT düyməsindən istifadə olunmur! RESET verib oyunu yenidən başladın.");
-        return;
-    }
-
-    get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
-        let tData = tSnap.val() || { duration: 20 };
-        
-        // Qalan saniyə dəqiqliklə istifadə olunur
-        let rem = tData.duration !== undefined ? tData.duration : 20;
-
-        remove(ref(db, "rooms/" + code + "/pressed"));
-        
-        // Əvvəl basan komandanı bloklamaq üçün 'next' siqnalı veririk
-        set(ref(db, "rooms/" + code + "/resetSignal"), {
-            type: "next",
-            blockedTeam: pressedData.team,
-            time: Date.now()
+                    remove(ref(db, "rooms/" + code + "/pressed"));
+                    set(ref(db, "rooms/" + code + "/resetSignal"), { type: "next", blockedTeam: pressedData.team, time: Date.now() });
+                    set(ref(db, "rooms/" + code + "/gameStarted"), true);
+                    set(ref(db, "rooms/" + code + "/timer"), { status: "started", startTime: Date.now(), duration: rem });
+                    set(ref(db, "rooms/" + code + "/sound"), { type: "start", time: Date.now() });
+                    
+                    let winner = document.getElementById("winner");
+                    if(winner) winner.innerHTML = "";
+                });
+            });
         });
-
-        set(ref(db, "rooms/" + code + "/gameStarted"), true);
-
-        // Taymer qaldığı saniyədən davam edir
-        set(ref(db, "rooms/" + code + "/timer"), {
-            status: "started",
-            startTime: Date.now(),
-            duration: rem
-        });
-
-        set(ref(db, "rooms/" + code + "/sound"), {
-            type: "start",
-            time: Date.now()
-        });
-        
-        let winner = document.getElementById("winner");
-        if(winner) winner.innerHTML = "";
     });
-});
-
-});
-
-});
 }
 
 function resetGame(){
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
-let code = document.getElementById("roomDisplay").innerText
-.replace("🏠 Otaq kodu: ","")
-.trim();
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,set,remove})=>{
+            set(ref(db,"rooms/"+code+"/gameStarted"),false);
+            remove(ref(db,"rooms/"+code+"/pressed"));
+            set(ref(db, "rooms/" + code + "/timer"), { status: "stopped", duration: 20 });
+            
+            document.getElementById("adminTimer").innerHTML = "20";
+            let pT = document.getElementById("playerTimer");
+            if (pT) pT.innerHTML = "20";
 
-import("./firebase.js").then((module)=>{
+            set(ref(db,"rooms/"+code+"/resetSignal"),{ type: "reset", time: Date.now() });
+            set(ref(db,"rooms/"+code+"/sound"),{ type:"reset", time:Date.now() });
 
-let db = module.db;
+            let resetSound = document.getElementById("resetSound");
+            if(resetSound){
+                resetSound.currentTime = 0;
+                resetSound.play().catch(()=>{});
+            }
 
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set,remove})=>{
-
-
-// oyunu bağla
-
-set(ref(db,"rooms/"+code+"/gameStarted"),false);
-
-
-// əvvəlki basışı sil
-
-remove(ref(db,"rooms/"+code+"/pressed"));
-
-set(ref(db, "rooms/" + code + "/timer"), {
-    status: "stopped",
-    duration: 20
-});
-document.getElementById("adminTimer").innerHTML = "20";
-let pT = document.getElementById("playerTimer");
-if (pT) pT.innerHTML = "20";
-
-// iştirakçılara reset göndər
-
-set(ref(db,"rooms/"+code+"/resetSignal"),{
-    type: "reset",
-    time: Date.now()
-});
-
-
-// gong siqnalı
-
-set(ref(db,"rooms/"+code+"/sound"),{
-    type:"reset",
-    time:Date.now()
-});
-
-
-// admin gong
-
-let resetSound = document.getElementById("resetSound");
-
-if(resetSound){
-
-resetSound.currentTime = 0;
-
-resetSound.play()
-.catch(()=>{});
-
-}
-
-
-
-// admin qalib yazısını təmizlə
-
-let winner = document.getElementById("winner");
-
-if(winner){
-
-winner.innerHTML="";
-
-}
-
-
-console.log("RESET göndərildi");
-
-
-});
-
-
-});
-
-
-}
-function pressButton(){
-
-let name = document.getElementById("teamName").value;
-let code = document.getElementById("roomCode").value;
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,runTransaction,set,update})=>{
-
-get(ref(db,"rooms/"+code+"/gameStarted"))
-.then((snapshot)=>{
-
-let started = snapshot.val() === true;
-
-runTransaction(ref(db,"rooms/"+code+"/pressed"),(current)=>{
-
-if(current !== null){
-    return current;
-}
-
-return{
-
-team:name,
-valid:started,
-time:Date.now()
-
-};
-
-}).then((result)=>{
-
-if(result.committed){
-
-get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
-    let tData = tSnap.val() || { startTime: Date.now(), duration: 20 };
-    
-    let rem = tData.duration || 20;
-    if(started && tData.startTime){
-        let passed = Math.floor((Date.now() - tData.startTime) / 1000);
-        rem = rem - passed;
-    }
-    if (rem < 0) rem = 0;
-    
-    // Düymə sıxılan kimi taymeri həmin qalan saniyədə dayandırırıq
-    update(ref(db, "rooms/" + code + "/timer"), {
-        status: "stopped",
-        duration: rem
+            let winner = document.getElementById("winner");
+            if(winner) winner.innerHTML="";
+        });
     });
-});
-
-if(started){
-
-document.getElementById("teamStatus").innerHTML =
-"✅ Siz ilk basdınız!";
-
-set(ref(db,"rooms/"+code+"/sound"),{
-    type:"press",
-    time:Date.now()
-});
-
-}
-else{
-
-document.getElementById("teamStatus").innerHTML =
-"❌ FAIL START";
-
-set(ref(db,"rooms/"+code+"/sound"),{
-    type:"fail",
-    time:Date.now()
-});
-
 }
 
+function pressButton(){
+    let name = document.getElementById("teamName").value;
+    let code = document.getElementById("roomCode").value;
+
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,get,runTransaction,set,update})=>{
+            get(ref(db,"rooms/"+code+"/gameStarted")).then((snapshot)=>{
+                let started = snapshot.val() === true;
+
+                runTransaction(ref(db,"rooms/"+code+"/pressed"),(current)=>{
+                    if(current !== null) return current;
+                    return { team:name, valid:started, time:Date.now() };
+                }).then((result)=>{
+                    if(result.committed){
+                        get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
+                            let tData = tSnap.val() || { startTime: Date.now(), duration: 20 };
+                            let rem = tData.duration || 20;
+                            if(started && tData.startTime){
+                                let passed = Math.floor((Date.now() - tData.startTime) / 1000);
+                                rem = rem - passed;
+                            }
+                            if (rem < 0) rem = 0;
+                            
+                            update(ref(db, "rooms/" + code + "/timer"), { status: "stopped", duration: rem });
+                        });
+
+                        if(started){
+                            document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!";
+                            set(ref(db,"rooms/"+code+"/sound"),{ type:"press", time:Date.now() });
+                        } else {
+                            document.getElementById("teamStatus").innerHTML = "❌ FAIL START";
+                            set(ref(db,"rooms/"+code+"/sound"),{ type:"fail", time:Date.now() });
+                        }
+                    } else {
+                        document.getElementById("teamStatus").innerHTML = "⛔ Başqa komanda cavab verdi.";
+                    }
+                });
+            });
+        });
+    });
 }
-else{
 
-document.getElementById("teamStatus").innerHTML =
-"⛔ Başqa komanda cavab verdi.";
-
-}
-
-});
-
-});
-
-});
-
-});
-
-}
 function unlockSound(){
-
-let sound = document.getElementById("startSound");
-
-if(sound){
-
-sound.currentTime = 0;
-
-sound.play()
-.then(()=>{
-
-sound.pause();
-
-sound.currentTime = 0;
-
-alert("Səs aktiv edildi ✅");
-
-})
-.catch((error)=>{
-
-console.log("Səs xətası:", error);
-
-alert("Səs aktiv olmadı ❌");
-
-});
-
+    let sound = document.getElementById("startSound");
+    if(sound){
+        sound.currentTime = 0;
+        sound.play().then(()=>{
+            sound.pause();
+            sound.currentTime = 0;
+            alert("Səs aktiv edildi ✅");
+        }).catch((error)=>{
+            alert("Səs aktiv olmadı ❌");
+        });
+    }
 }
 
-}
 function changeScore(color, amount){
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
-let code = document.getElementById("roomDisplay").innerText
-.replace("🏠 Otaq kodu: ","")
-.trim();
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,get,set})=>{
-
-get(ref(db,"rooms/"+code+"/scores"))
-.then((snapshot)=>{
-
-let scores = snapshot.val() || {
-green:0,
-red:0
-};
-
-scores[color] += amount;
-
-if(scores[color] < 0){
-scores[color] = 0;
-}
-
-if(scores.green > 5) scores.green = 5;
-if(scores.red > 5) scores.red = 5;
-
-set(ref(db,"rooms/"+code+"/scores"),scores);
-
-});
-
-});
-
-});
-
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,get,set})=>{
+            get(ref(db,"rooms/"+code+"/scores")).then((snapshot)=>{
+                let scores = snapshot.val() || { green:0, red:0 };
+                scores[color] += amount;
+                if(scores[color] < 0) scores[color] = 0;
+                if(scores.green > 5) scores.green = 5;
+                if(scores.red > 5) scores.red = 5;
+                set(ref(db,"rooms/"+code+"/scores"),scores);
+            });
+        });
+    });
 }
 
 function resetScores(){
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
-let code = document.getElementById("roomDisplay").innerText
-.replace("🏠 Otaq kodu: ","")
-.trim();
-
-import("./firebase.js").then((module)=>{
-
-let db = module.db;
-
-import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
-.then(({ref,set})=>{
-
-set(ref(db,"rooms/"+code+"/scores"),{
-
-green:0,
-red:0
-
-});
-
-});
-
-});
-
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,set})=>{
+            set(ref(db,"rooms/"+code+"/scores"),{ green:0, red:0 });
+        });
+    });
 }
+
 function showScores(){
-
-document.getElementById("adminPanel").style.display="none";
-
-document.getElementById("scorePage").style.display="block";
-
+    document.getElementById("adminPanel").style.display="none";
+    document.getElementById("scorePage").style.display="block";
 }
 
 function backToAdmin(){
-
-document.getElementById("scorePage").style.display="none";
-
-document.getElementById("adminPanel").style.display="block";
-
+    document.getElementById("scorePage").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
 }
+
 function goHome(){
-
-hideAll();
-
-document.getElementById("main").style.display="block";
-
+    hideAll();
+    document.getElementById("main").style.display="block";
 }
 </script>
-<audio id="startSound" preload="auto">
-    <source src="Ding.mp3" type="audio/mpeg">
-</audio>
 
-<audio id="resetSound" preload="auto">
-    <source src="Gong.mp3" type="audio/mpeg">
-</audio>
-<audio id="failSound" preload="auto">
-    <source src="fail.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="pressSound" preload="auto">
-    <source src="press.mp3" type="audio/mpeg">
-</audio>
-
+<audio id="startSound" preload="auto"><source src="Ding.mp3" type="audio/mpeg"></audio>
+<audio id="resetSound" preload="auto"><source src="Gong.mp3" type="audio/mpeg"></audio>
+<audio id="failSound" preload="auto"><source src="fail.mp3" type="audio/mpeg"></audio>
+<audio id="pressSound" preload="auto"><source src="press.mp3" type="audio/mpeg"></audio>
 
 </body>
 </html>
