@@ -8,142 +8,278 @@
 <title>Brain Ring</title>
 
 <style>
-/* --- MODERN VƏ PREMIUM BRAIN RING STİLLƏRİ --- */
 body {
     margin:0;
     font-family:"Arial", sans-serif;
-    background: radial-gradient(circle at top,#1e1b4b,#030712 80%);
+    background:
+    radial-gradient(circle at top,#334155,#020617 70%);
     color:white;
     text-align:center;
     min-height:100vh;
-    padding-top: 40px;
 }
+
 
 .box {
     padding:25px;
-    max-width:500px;
+    max-width:600px;
     margin:auto;
-    background: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 30px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
+
 /* Başlıqlar */
+
 h1 {
-    font-size:48px;
-    margin:25px 0 35px 0;
+
+    font-size:55px;
+    margin:35px 0;
+
     background:linear-gradient(90deg,#38bdf8,#818cf8,#f472b6);
     -webkit-background-clip:text;
     color:transparent;
+
     letter-spacing:2px;
+
 }
 
-h2 { font-size:28px; margin:25px; color: #cbd5e1; }
-h3 { font-size:24px; color:#facc15; }
+
+h2 {
+
+    font-size:32px;
+    margin:25px;
+
+}
+
+
+h3 {
+
+    font-size:28px;
+    color:#facc15;
+
+}
+
 
 /* Düymələr */
+
 button {
+
     width:90%;
     max-width:420px;
-    padding:18px;
-    margin:12px auto;
+
+    padding:22px;
+
+    margin:15px;
+
     border:none;
-    border-radius:20px;
-    font-size:22px;
+
+    border-radius:25px;
+
+    font-size:25px;
+
     font-weight:800;
+
     color:white;
+
     cursor:pointer;
+
     transition:0.25s;
-    box-shadow: 0 8px 25px rgba(0,0,0,.35);
-    display: block;
+
+    box-shadow:
+    0 12px 30px rgba(0,0,0,.45);
+
 }
 
-button:hover { transform:translateY(-2px); filter: brightness(1.1); }
-button:active { transform:scale(.96); }
-button:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; filter: grayscale(1); }
 
-/* Düymə rəngləri */
-.admin { background: linear-gradient(135deg,#10b981,#059669); }
-.team { background: linear-gradient(135deg,#3b82f6,#2563eb); }
-.soundBtn, .backBtn { background: linear-gradient(135deg,#475569,#334155) !important; color:white !important; }
+button:hover {
+
+    transform:translateY(-3px);
+
+}
+
+
+button:active {
+
+    transform:scale(.94);
+
+}
+
+
+/* Admin düyməsi */
+
+.admin {
+
+    background:
+    linear-gradient(135deg,#22c55e,#15803d);
+
+}
+
+
+/* Komanda düyməsi */
+
+.team {
+
+    background:
+    linear-gradient(135deg,#2563eb,#1e40af);
+
+}
+/* Köməkçi düymələr */
+.soundBtn {
+
+    background: linear-gradient(135deg,#64748b,#334155) !important;
+    color:white !important;
+
+}
+
+
+.backBtn {
+
+    background: linear-gradient(135deg,#64748b,#334155) !important;
+    color:white !important;
+
+}
 
 /* Inputlar */
-input, select {
+
+input {
+
     width:80%;
     max-width:380px;
-    padding:16px;
-    margin:12px auto;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius:16px;
-    background: rgba(15, 23, 42, 0.6);
-    color: white;
-    font-size:18px;
-    text-align:center;
-    outline:none;
-}
-input:focus, select:focus { border-color: #6366f1; box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
-select option { background: #0f172a; color: white; }
 
-/* Səhifələrin gizlədilməsi üçün vacib klass (Bunu sildiyin üçün xəta verirdi) */
-.hidden {
-    display:none !important;
+    padding:18px;
+
+    margin:12px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    color:#111827;
+
+    font-size:20px;
+
+    text-align:center;
+
+    outline:none;
+
 }
+
+
+/* Gizli hissə */
+
+.hidden {
+
+    display:none;
+
+}
+
 
 /* Otaq kodu */
+
 #roomDisplay {
+
     display:inline-block;
-    padding:12px 24px;
-    border-radius:16px;
+
+    padding:15px 25px;
+
+    border-radius:20px;
+
     background:#0f172a;
+
     color:#facc15;
-    font-size:32px;
+
+    font-size:35px;
+
     margin:20px;
-    box-shadow: 0 0 25px rgba(250,204,21,.25);
-    border: 1px solid rgba(250, 204, 21, 0.2);
+
+    box-shadow:
+    0 0 25px rgba(250,204,21,.25);
+
 }
+
 
 /* Qalib yazısı */
+
 #winner {
-    font-size:30px;
+
+    font-size:35px;
+
     color:#38bdf8;
+
     margin:25px;
+
     animation:pulse 1s infinite;
+
 }
 
-#teamStatus { font-size:26px; margin:25px; font-weight:bold; }
+
+/* Status */
+
+#teamStatus {
+
+    font-size:30px;
+
+    margin:25px;
+
+    font-weight:bold;
+
+}
+
 
 /* BAS düyməsi */
+
 #gamePage button {
-    width:210px;
-    height:210px;
+
+    width:230px;
+
+    height:230px;
+
     border-radius:50%;
-    font-size:42px;
-    margin: 25px auto;
-    background: radial-gradient(circle at 30% 25%, #f87171, #dc2626 50%, #7f1d1d);
-    box-shadow: 0 0 40px rgba(239,68,68,.7), inset 0 0 25px rgba(255,255,255,.25);
+
+    font-size:45px;
+
+    background:
+
+    radial-gradient(circle at 30% 25%,
+    #f87171,
+    #dc2626 50%,
+    #7f1d1d);
+
+    box-shadow:
+
+    0 0 40px rgba(239,68,68,.7),
+
+    inset 0 0 25px rgba(255,255,255,.25);
+
 }
 
-#gamePage button:active { box-shadow: 0 0 10px rgba(239,68,68,.5); }
 
-/* Xalların idarə olunması */
-#scorePage button { width: 60px; display: inline-block; margin: 5px; padding: 12px; font-size: 18px; border-radius: 12px; }
-#greenScore { color: #4ade80; font-size: 54px; }
-#redScore { color: #f87171; font-size: 54px; }
+#gamePage button:active {
+
+    box-shadow:
+
+    0 0 10px rgba(239,68,68,.5);
+
+}
+
+
+
+/* Animasiya */
 
 @keyframes pulse {
-    0% { transform:scale(1); }
-    50% { transform:scale(1.04); }
-    100% { transform:scale(1); }
+
+0% {
+    transform:scale(1);
 }
 
-.score-pop { animation: popUp 0.4s ease-out; display: inline-block; }
-@keyframes popUp {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
+50% {
+    transform:scale(1.05);
+}
+
+100% {
+    transform:scale(1);
+}
+
 }
 
 </style>
@@ -1118,8 +1254,6 @@ hideAll();
 document.getElementById("main").style.display="block";
 
 } 
-// Sayt ilk dəfə açılanda ana səhifənin (Aparıcı/Komanda düymələrinin) görünməsi üçün:
-document.getElementById("main").style.display = "block";
 
 </script>
 <audio id="startSound" preload="auto">
