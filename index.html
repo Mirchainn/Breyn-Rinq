@@ -311,7 +311,7 @@ input:focus, select:focus {
         <option value="red">🔴 Qırmızı masa</option>
     </select>
     <br>
-    <button class="soundBtn" onclick="unlockSound()">🔊 SƏSİ YOXLA</button>
+    <button class="soundBtn" onclick="unlockSound('team')">🔊 SƏSİ YOXLA</button>
     <button class="team" onclick="joinRoom()">QOŞUL</button>
     <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
 </div>
@@ -343,6 +343,9 @@ input:focus, select:focus {
 <div id="adminPanel" class="hidden">
     <h2>👑 Admin panel</h2>
     <button class="admin" onclick="createRoom()">OTAQ YARAT</button>
+    <br>
+    <!-- Admin üçün də səsin kilidini açan düymə əlavə olundu -->
+    <button class="soundBtn" onclick="unlockSound('admin')">🔊 SƏSİ YOXLA (ADMİN)</button>
     
     <br>
     <h3 id="roomDisplay" class="hidden"></h3>
@@ -559,7 +562,6 @@ function listenPress(code){
                 }
             });
 
-            // Bütün səslər (Ding, Gong, fail, press) artıq admin panelində də tam işləyir
             let startSound = document.getElementById("startSound");
             let resetSound = document.getElementById("resetSound");
             let failSound = document.getElementById("failSound");
@@ -888,14 +890,14 @@ function pressButton(){
     });
 }
 
-function unlockSound(){
+function unlockSound(role){
     let sound = document.getElementById("startSound");
     if(sound){
         sound.currentTime = 0;
         sound.play().then(()=>{
             sound.pause();
             sound.currentTime = 0;
-            alert("Səs aktiv edildi ✅");
+            alert(role === 'admin' ? "Admin səsi aktiv edildi ✅" : "Komanda səsi aktiv edildi ✅");
         }).catch((error)=>{
             alert("Səs aktiv olmadı ❌");
         });
