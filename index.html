@@ -395,7 +395,26 @@ box-shadow:0 0 15px rgba(255,255,255,.08);
 </div>
 
 </div>
+<div id="scoreBoardPlayer" style="
+margin:15px auto;
+max-width:300px;
+background:#0f172a;
+border-radius:12px;
+padding:12px;
+font-size:22px;
+font-weight:bold;
+box-shadow:0 0 15px rgba(255,255,255,.08);
+">
 
+🟢 <span id="greenScorePlayer">0</span>
+
+&nbsp;&nbsp;:
+
+&nbsp;&nbsp;
+
+<span id="redScorePlayer">0</span> 🔴
+
+</div>
 <button class="team" onclick="pressButton()" style="height:200px;font-size:40px;">
 🔴 BAS
 </button>
@@ -443,9 +462,54 @@ START
 <button class="admin" onclick="resetGame()">
 RESET
 </button>
+<button class="admin" onclick="showScores()">
+🏆 XALLAR
+</button>
+</div>
+<div id="scorePage" class="hidden">
+
+<h2>🏆 Xallar</h2>
+
+<div style="
+margin:20px auto;
+max-width:350px;
+background:#0f172a;
+padding:20px;
+border-radius:15px;">
+
+<h3>🟢 Yaşıl Komanda</h3>
+
+<h2 id="greenScore">0</h2>
+
+<button class="team" onclick="changeScore('green',-1)">➖</button>
+
+<button class="team" onclick="changeScore('green',1)">➕</button>
+
+<hr style="margin:25px 0;">
+
+<h3>🔴 Qırmızı Komanda</h3>
+
+<h2 id="redScore">0</h2>
+
+<button class="admin" onclick="changeScore('red',-1)">➖</button>
+
+<button class="admin" onclick="changeScore('red',1)">➕</button>
+
+<br><br>
+
+<button class="admin" onclick="resetScores()">
+🗑️ XALLARI SIFIRLA
+</button>
+
+<br>
+
+<button class="backBtn" onclick="backToAdmin()">
+⬅️ Geri
+</button>
 
 </div>
 
+</div>
 <div id="status"></div>
 
 
@@ -522,8 +586,13 @@ import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
 .then(({ref,set})=>{
 
 set(ref(db, "rooms/" + code), {
-active:true,
-created:Date.now()
+active: true,
+created: Date.now(),
+
+scores: {
+green: 0,
+red: 0
+}
 });
 
 });
@@ -582,6 +651,24 @@ let r = document.getElementById("redTeam");
 if(g) g.innerHTML = "🟢 Yaşıl: " + green;
 if(r) r.innerHTML = "🔴 Qırmızı: " + red;
 
+});
+onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
+
+let scores = snapshot.val() || {
+green:0,
+red:0
+};
+
+let gScore = document.getElementById("greenScore");
+let rScore = document.getElementById("redScore");
+
+if(gScore) gScore.innerHTML = scores.green;
+if(rScore) rScore.innerHTML = scores.red;
+let gPlayer = document.getElementById("greenScorePlayer");
+let rPlayer = document.getElementById("redScorePlayer");
+
+if(gPlayer) gPlayer.innerHTML = scores.green;
+if(rPlayer) rPlayer.innerHTML = scores.red;
 });
 
 });
@@ -1066,6 +1153,86 @@ alert("Səs aktiv olmadı ❌");
 });
 
 }
+
+}
+function changeScore(color, amount){
+
+let code = document.getElementById("roomDisplay").innerText
+.replace("🏠 Otaq kodu: ","")
+.trim();
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,get,set})=>{
+
+get(ref(db,"rooms/"+code+"/scores"))
+.then((snapshot)=>{
+
+let scores = snapshot.val() || {
+green:0,
+red:0
+};
+
+scores[color] += amount;
+
+if(scores[color] < 0){
+scores[color] = 0;
+}
+
+if(scores.green > 5) scores.green = 5;
+if(scores.red > 5) scores.red = 5;
+
+set(ref(db,"rooms/"+code+"/scores"),scores);
+
+});
+
+});
+
+});
+
+}
+
+function resetScores(){
+
+let code = document.getElementById("roomDisplay").innerText
+.replace("🏠 Otaq kodu: ","")
+.trim();
+
+import("./firebase.js").then((module)=>{
+
+let db = module.db;
+
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+.then(({ref,set})=>{
+
+set(ref(db,"rooms/"+code+"/scores"),{
+
+green:0,
+red:0
+
+});
+
+});
+
+});
+
+}
+function showScores(){
+
+document.getElementById("adminPanel").style.display="none";
+
+document.getElementById("scorePage").style.display="block";
+
+}
+
+function backToAdmin(){
+
+document.getElementById("scorePage").style.display="none";
+
+document.getElementById("adminPanel").style.display="block";
 
 }
 function goHome(){
