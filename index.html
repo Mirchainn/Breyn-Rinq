@@ -199,7 +199,6 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let timerInterval = null;
-let myFailedState = false;
 
 window.hideAll = function() {
     document.getElementById("main").classList.add("hidden");
@@ -222,15 +221,21 @@ window.loginAdmin = function(){
     else { alert("Səhv şifrə"); }
 }
 
-function startLocalCountdown(startTime) {
+function startLocalCountdown(startTime, initialDuration = 20) {
     if (timerInterval) clearInterval(timerInterval);
     let adminDisplay = document.getElementById("adminTimer");
     let playerDisplay = document.getElementById("playerTimer");
+    
     timerInterval = setInterval(() => {
         let now = Date.now();
         let passed = Math.floor((now - startTime) / 1000);
-        let timeLeft = 20 - passed;
-        if (timeLeft <= 0) { timeLeft = 0; clearInterval(timerInterval); }
+        let timeLeft = initialDuration - passed;
+        
+        if (timeLeft <= 0) { 
+            timeLeft = 0; 
+            clearInterval(timerInterval); 
+        }
+        
         if (adminDisplay) adminDisplay.innerHTML = timeLeft;
         if (playerDisplay) playerDisplay.innerHTML = timeLeft;
     }, 200);
@@ -244,7 +249,13 @@ window.createRoom = function(){
     let code = Math.floor(1000 + Math.random()*9000);
     document.getElementById("roomDisplay").innerHTML = "🏠 Otaq kodu: " + code;
     listenPress(code);
-    set(ref(db, "rooms/" + code), { active: true, created: Date.now(), scores: { green: 0, red: 0 } });
+    set(ref(db, "rooms/" + code), { 
+        active: true, 
+        created: Date.now(), 
+        scores: { green: 0, red: 0 },
+        gameStarted: false,
+        timer: { status: "stopped", remaining: 20 }
+    });
 }
 
 function listenPress(code){
@@ -287,7 +298,7 @@ function listenPress(code){
     onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
         let timerData = snapshot.val();
         if (timerData && timerData.status === "started") { 
-            startLocalCountdown(timerData.startTime); 
+            startLocalCountdown(timerData.startTime, timerData.duration || 20); 
         } else { 
             stopLocalCountdown(); 
         }
@@ -296,11 +307,14 @@ function listenPress(code){
     let adminPressSound = document.getElementById("pressSound"); 
     let adminFailSound = document.getElementById("failSound");
     let adminStartSound = document.getElementById("startSound");
+    let adminResetSound = document.getElementById("resetSound");
+
     onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
         let sound = snapshot.val(); if (!sound) return;
         if (sound.type === "start" && adminStartSound) { adminStartSound.currentTime = 0; adminStartSound.play().catch(()=>{}); }
         if (sound.type === "press" && adminPressSound) { adminPressSound.currentTime = 0; adminPressSound.play().catch(()=>{}); }
         if (sound.type === "fail" && adminFailSound) { adminFailSound.currentTime = 0; adminFailSound.play().catch(()=>{}); }
+        if (sound.type === "reset" && adminResetSound) { adminResetSound.currentTime = 0; adminResetSound.play().catch(()=>{}); }
     });
 }
 
@@ -310,100 +324,107 @@ window.joinRoom = function(){
     let color = document.getElementById("teamColor").value;
     if(name === "" || code === ""){ alert("Ad və otaq kodunu yazın"); return; }
 
-    myFailedState = false; // Qoşulan kimi fail vəziyyətini təmizləyirik
-
     get(ref(db, "rooms/" + code)).then((snapshot) => {
         if(snapshot.exists()){
-            hideAll(); 
-            document.getElementById("gamePage").classList.remove("hidden");
-            set(ref(db, "rooms/" + code + "/teams/" + name), { table: color });
-            document.getElementById("myTeam").innerHTML = (color === "green" ? "🟢 " : "🔴 ") + name;
-            
-            let playButton = document.getElementById("mainPressBtn");
-            if(color === "green" && playButton){
-                playButton.style.background = "radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
-                playButton.style.boxShadow = "0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
-            }
-
-            let status = document.getElementById("teamStatus");
-
-            onValue(ref(db, "rooms/" + code + "/teams"), (snapshot) => {
-                let teams = snapshot.val() || {}; let green = "-"; let red = "-";
+            get(ref(db, "rooms/" + code + "/teams")).then((teamSnapshot) => {
+                let teams = teamSnapshot.val() || {};
                 for(let team in teams){ 
-                    if(teams[team].table === "green") green = team; 
-                    if(teams[team].table === "red") red = team; 
+                    if(teams[team].table === color && team !== name){ 
+                        alert("⚠️ Bu masa artıq tutulub!"); return; 
+                    } 
                 }
-                let g2 = document.getElementById("greenTeamPlayer"); 
-                let r2 = document.getElementById("redTeamPlayer");
-                if(g2) g2.innerHTML = "🟢 Yaşıl: " + green; 
-                if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
-            });
-
-            onValue(ref(db, "rooms/" + code + "/scores"), (snapshot) => {
-                let scores = snapshot.val() || { green: 0, red: 0 };
-                let gPlayer = document.getElementById("greenScorePlayer"); 
-                let rPlayer = document.getElementById("redScorePlayer");
-                if(gPlayer) gPlayer.innerHTML = scores.green; 
-                if(rPlayer) rPlayer.innerHTML = scores.red;
-            });
-
-            onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
-                let timerData = snapshot.val();
-                if (timerData && timerData.status === "started") { 
-                    startLocalCountdown(timerData.startTime);
-                } else { 
-                    stopLocalCountdown(); 
+                
+                hideAll(); 
+                document.getElementById("gamePage").classList.remove("hidden");
+                set(ref(db, "rooms/" + code + "/teams/" + name), { table: color });
+                document.getElementById("myTeam").innerHTML = (color === "green" ? "🟢 " : "🔴 ") + name;
+                
+                let playButton = document.getElementById("mainPressBtn");
+                if(color === "green" && playButton){
+                    playButton.style.background = "radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
+                    playButton.style.boxShadow = "0 0 40px rgba(34,197,94,.7), inset 0 0 25px rgba(255,255,255,.25)";
                 }
-            });
 
-            onValue(ref(db, "rooms/" + code + "/pressed"), (snapshot) => {
-                let data = snapshot.val(); 
-                let button = document.getElementById("mainPressBtn");
-                if(data){
-                    stopLocalCountdown();
-                    if(button){ button.disabled = true; button.innerHTML = "🔒"; }
-                    if(data.valid === false){ 
-                        if(data.team === name) myFailedState = true;
-                        status.innerHTML = (data.team === name) ? "❌ FAIL START" : "❌ " + data.team + " FAIL START etdi!"; 
-                    } else if(data.valid === true){ 
-                        status.innerHTML = (data.team === name) ? "✅ Siz ilk basdınız!" : "🔴 " + data.team + " artıq basdı!"; 
+                let status = document.getElementById("teamStatus");
+
+                onValue(ref(db, "rooms/" + code + "/teams"), (snapshot) => {
+                    let teams = snapshot.val() || {}; let green = "-"; let red = "-";
+                    for(let team in teams){ 
+                        if(teams[team].table === "green") green = team; 
+                        if(teams[team].table === "red") red = team; 
                     }
-                }
-            });
+                    let g2 = document.getElementById("greenTeamPlayer"); 
+                    let r2 = document.getElementById("redTeamPlayer");
+                    if(g2) g2.innerHTML = "🟢 Yaşıl: " + green; 
+                    if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
+                });
 
-            onValue(ref(db, "rooms/" + code + "/resetSignal"), (snapshot) => {
-                let sig = snapshot.val(); 
-                let button = document.getElementById("mainPressBtn");
-                if(!button) return;
+                onValue(ref(db, "rooms/" + code + "/scores"), (snapshot) => {
+                    let scores = snapshot.val() || { green: 0, red: 0 };
+                    let gPlayer = document.getElementById("greenScorePlayer"); 
+                    let rPlayer = document.getElementById("redScorePlayer");
+                    if(gPlayer) gPlayer.innerHTML = scores.green; 
+                    if(rPlayer) rPlayer.innerHTML = scores.red;
+                });
 
-                if(sig === "clear") {
-                    myFailedState = false;
-                    button.disabled = false; 
-                    button.innerHTML = "🔴 BAS"; 
-                    if(status) status.innerHTML = "";
-                } else if(sig) {
-                    if(myFailedState) {
-                        button.disabled = true; 
-                        button.innerHTML = "🔒"; 
-                    } else {
+                onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+                    let timerData = snapshot.val();
+                    if (timerData && timerData.status === "started") { 
+                        startLocalCountdown(timerData.startTime, timerData.duration || 20);
+                    } else { 
+                        stopLocalCountdown(); 
+                    }
+                });
+
+                onValue(ref(db, "rooms/" + code + "/pressed"), (snapshot) => {
+                    let data = snapshot.val(); 
+                    let button = document.getElementById("mainPressBtn");
+                    if(data){
+                        stopLocalCountdown();
+                        if(button){ button.disabled = true; button.innerHTML = "🔒"; }
+                        if(data.valid === false){ 
+                            status.innerHTML = (data.team === name) ? "❌ FAIL START" : "❌ " + data.team + " FAIL START etdi!"; 
+                        } else if(data.valid === true){ 
+                            status.innerHTML = (data.team === name) ? "✅ Siz ilk basdınız!" : "🔴 " + data.team + " artıq basdı!"; 
+                        }
+                    }
+                });
+
+                onValue(ref(db, "rooms/" + code + "/resetSignal"), (snapshot) => {
+                    let sig = snapshot.val(); 
+                    let button = document.getElementById("mainPressBtn");
+                    if(!button) return;
+
+                    if(sig === "clear") {
                         button.disabled = false; 
                         button.innerHTML = "🔴 BAS"; 
                         if(status) status.innerHTML = "";
+                    } else if(sig) {
+                        get(ref(db, "rooms/" + code + "/pressedHistory/" + name)).then((hSnap) => {
+                            if(hSnap.exists() && hSnap.val().valid === false) {
+                                button.disabled = true; 
+                                button.innerHTML = "🔒"; 
+                            } else {
+                                button.disabled = false; 
+                                button.innerHTML = "🔴 BAS"; 
+                                if(status) status.innerHTML = "";
+                            }
+                        });
                     }
-                }
-            });
+                });
 
-            let startSound = document.getElementById("startSound"); 
-            let resetSound = document.getElementById("resetSound");
-            let failSound = document.getElementById("failSound"); 
-            let pressSound = document.getElementById("pressSound");
+                let startSound = document.getElementById("startSound"); 
+                let resetSound = document.getElementById("resetSound");
+                let failSound = document.getElementById("failSound"); 
+                let pressSound = document.getElementById("pressSound");
 
-            onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
-                let sound = snapshot.val(); if(!sound) return;
-                if(sound.type === "start" && startSound){ startSound.currentTime = 0; startSound.play().catch(()=>{}); }
-                if(sound.type === "reset" && resetSound){ resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
-                if(sound.type === "fail" && failSound){ failSound.currentTime = 0; failSound.play().catch(()=>{}); }
-                if(sound.type === "press" && pressSound){ pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
+                onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
+                    let sound = snapshot.val(); if(!sound) return;
+                    if(sound.type === "start" && startSound){ startSound.currentTime = 0; startSound.play().catch(()=>{}); }
+                    if(sound.type === "reset" && resetSound){ resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
+                    if(sound.type === "fail" && failSound){ failSound.currentTime = 0; failSound.play().catch(()=>{}); }
+                    if(sound.type === "press" && pressSound){ pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
+                });
             });
         } else { alert("Belə otaq yoxdur!"); }
     });
@@ -414,12 +435,16 @@ window.startGame = function(){
     if(!code) return alert("Əvvəlcə otaq yaradın!");
     
     remove(ref(db, "rooms/" + code + "/pressed"));
+    remove(ref(db, "rooms/" + code + "/pressedHistory"));
     set(ref(db, "rooms/" + code + "/resetSignal"), "clear");
     set(ref(db, "rooms/" + code + "/gameStarted"), true);
-    set(ref(db, "rooms/" + code + "/timer"), { startTime: Date.now(), status: "started" }).then(() => {
+    
+    set(ref(db, "rooms/" + code + "/timer"), { 
+        startTime: Date.now(), 
+        duration: 20,
+        status: "started" 
+    }).then(() => {
         set(ref(db, "rooms/" + code + "/sound"), { type: "start", time: Date.now() });
-        let startSound = document.getElementById("startSound");
-        if(startSound){ startSound.currentTime = 0; startSound.play().catch(()=>{}); }
     });
 }
 
@@ -428,13 +453,22 @@ window.continueGame = function(){
     if(!code) return;
     
     get(ref(db, "rooms/" + code + "/timer")).then((snapshot) => {
-        let timerData = snapshot.val() || { startTime: Date.now() };
+        let timerData = snapshot.val() || { startTime: Date.now(), duration: 20 };
+        
         let now = Date.now(); 
-        let passed = now - timerData.startTime;
+        let passed = Math.floor((now - (timerData.startTime || now)) / 1000);
+        let remaining = (timerData.duration || 20) - passed;
+        if(remaining < 0) remaining = 0;
         
         remove(ref(db, "rooms/" + code + "/pressed"));
         set(ref(db, "rooms/" + code + "/resetSignal"), Date.now()); 
-        set(ref(db, "rooms/" + code + "/timer"), { status: "started", startTime: Date.now() - passed });
+        
+        set(ref(db, "rooms/" + code + "/timer"), { 
+            status: "started", 
+            startTime: Date.now(),
+            duration: remaining 
+        });
+        
         set(ref(db, "rooms/" + code + "/sound"), { type: "start", time: Date.now() });
     });
 }
@@ -445,13 +479,17 @@ window.resetGame = function(){
     
     set(ref(db, "rooms/" + code + "/gameStarted"), false); 
     remove(ref(db, "rooms/" + code + "/pressed"));
-    set(ref(db, "rooms/" + code + "/timer"), { status: "stopped", startTime: 0 });
+    remove(ref(db, "rooms/" + code + "/pressedHistory"));
+    
+    set(ref(db, "rooms/" + code + "/timer"), { status: "stopped", startTime: 0, duration: 20 });
+    document.getElementById("adminTimer").innerHTML = "20";
+    document.getElementById("playerTimer").innerHTML = "20";
+
     set(ref(db, "rooms/" + code + "/resetSignal"), "clear"); 
     set(ref(db, "rooms/" + code + "/sound"), { type: "reset", time: Date.now() });
     
-    let resetSound = document.getElementById("resetSound");
-    if(resetSound){ resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
-    let winner = document.getElementById("winner"); if(winner) winner.innerHTML = "";
+    let winner = document.getElementById("winner"); 
+    if(winner) winner.innerHTML = "";
 }
 
 window.pressButton = function(){
@@ -465,18 +503,26 @@ window.pressButton = function(){
             return { team: name, valid: started, time: Date.now() };
         }).then((result) => {
             if(result.committed){
-                update(ref(db, "rooms/" + code + "/timer"), { status: "stopped" });
+                get(ref(db, "rooms/" + code + "/timer")).then((tSnap) => {
+                    let timerData = tSnap.val() || { startTime: Date.now(), duration: 20 };
+                    let passed = Math.floor((Date.now() - timerData.startTime) / 1000);
+                    let rem = (timerData.duration || 20) - passed;
+                    if(rem < 0) rem = 0;
+                    
+                    update(ref(db, "rooms/" + code + "/timer"), { 
+                        status: "stopped",
+                        duration: rem
+                    });
+                });
+
+                set(ref(db, "rooms/" + code + "/pressedHistory/" + name), { valid: started });
+                
                 if(started){
                     document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!"; 
                     set(ref(db, "rooms/" + code + "/sound"), { type: "press", time: Date.now() });
-                    let pressSound = document.getElementById("pressSound"); 
-                    if(pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
                 } else {
-                    myFailedState = true;
                     document.getElementById("teamStatus").innerHTML = "❌ FAIL START"; 
                     set(ref(db, "rooms/" + code + "/sound"), { type: "fail", time: Date.now() });
-                    let failSound = document.getElementById("failSound"); 
-                    if(failSound) { failSound.currentTime = 0; failSound.play().catch(()=>{}); }
                 }
             } else { 
                 document.getElementById("teamStatus").innerHTML = "⛔ Başqa komanda cavab verdi."; 
