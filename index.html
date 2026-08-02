@@ -769,6 +769,19 @@ if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
 if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
 
 });
+// İŞTİRAKÇI EKRANINDA CANLI XALLARI GÖSTƏRMƏK ÜÇÜN ƏLAVƏ (YENİ)
+onValue(ref(db, "rooms/" + code + "/scores"), (snapshot) => {
+    let scores = snapshot.val() || { green: 0, red: 0 };
+    
+    // İştirakçı ekranındakı yaşıl və qırmızı xal elementlərini tapırıq
+    let gPlayer = document.getElementById("greenScorePlayer");
+    let rPlayer = document.getElementById("redScorePlayer");
+    
+    // Əgər elementlər ekranda varsa, içindəki rəqəmləri canlı olaraq yeniləyirik
+    if(gPlayer) gPlayer.innerHTML = scores.green;
+    if(rPlayer) rPlayer.innerHTML = scores.red;
+});
+
 
 // BAS NƏTİCƏSİ
 
