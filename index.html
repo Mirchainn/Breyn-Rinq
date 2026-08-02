@@ -237,10 +237,6 @@ function startLocalCountdown(startTime) {
 
 function stopLocalCountdown() {
     if (timerInterval) clearInterval(timerInterval);
-    let adminDisplay = document.getElementById("adminTimer");
-    let playerDisplay = document.getElementById("playerTimer");
-    if (adminDisplay) adminDisplay.innerHTML = "20";
-    if (playerDisplay) playerDisplay.innerHTML = "20";
 }
 
 window.createRoom = function(){
@@ -255,6 +251,7 @@ function listenPress(code){
         let data = snapshot.val();
         let winnerEl = document.getElementById("winner");
         if(data){
+            stopLocalCountdown(); // Basılanda taymer həm admində, həm də komandada dayanır
             if(data.valid === true){ 
                 winnerEl.innerHTML = "🔴 " + data.team + " BASDI!"; 
             } else { 
@@ -289,9 +286,15 @@ function listenPress(code){
     onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
         let timerData = snapshot.val();
         if (timerData && timerData.status === "started") { 
-            startLocalCountdown(timerData.startTime); 
+            get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
+                if(!pSnap.exists()) startLocalCountdown(timerData.startTime); 
+            });
         } else { 
             stopLocalCountdown(); 
+            let adminDisplay = document.getElementById("adminTimer");
+            let playerDisplay = document.getElementById("playerTimer");
+            if (adminDisplay) adminDisplay.innerHTML = "20";
+            if (playerDisplay) playerDisplay.innerHTML = "20";
         }
     });
 
@@ -356,9 +359,15 @@ window.joinRoom = function(){
                 onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
                     let timerData = snapshot.val();
                     if (timerData && timerData.status === "started") { 
-                        startLocalCountdown(timerData.startTime); 
+                        get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
+                            if(!pSnap.exists()) startLocalCountdown(timerData.startTime);
+                        });
                     } else { 
                         stopLocalCountdown(); 
+                        let adminDisplay = document.getElementById("adminTimer");
+                        let playerDisplay = document.getElementById("playerTimer");
+                        if (adminDisplay) adminDisplay.innerHTML = "20";
+                        if (playerDisplay) playerDisplay.innerHTML = "20";
                     }
                 });
 
@@ -366,7 +375,7 @@ window.joinRoom = function(){
                     let data = snapshot.val(); 
                     let button = document.getElementById("mainPressBtn");
                     if(data){
-                        if (timerInterval) clearInterval(timerInterval);
+                        stopLocalCountdown();
                         if(button){ button.disabled = true; button.innerHTML = "🔒"; }
                         if(data.valid === false){ 
                             status.innerHTML = (data.team === name) ? "❌ FAIL START" : "❌ " + data.team + " FAIL START etdi!"; 
@@ -379,16 +388,20 @@ window.joinRoom = function(){
                 onValue(ref(db, "rooms/" + code + "/resetSignal"), (snapshot) => {
                     let sig = snapshot.val(); 
                     let button = document.getElementById("mainPressBtn");
+                    if(!button) return;
+
                     if(sig === "clear") {
-                        if(button){ button.disabled = false; button.innerHTML = "🔴 BAS"; } 
+                        button.disabled = false; 
+                        button.innerHTML = "🔴 BAS"; 
                         if(status) status.innerHTML = "";
                     } else if(sig) {
-                        get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
-                            let pData = pSnap.val();
-                            if(pData && pData.team === name && pData.valid === false) {
-                                if(button){ button.disabled = true; button.innerHTML = "🔒"; }
+                        get(ref(db, "rooms/" + code + "/pressedHistory/" + name)).then((hSnap) => {
+                            if(hSnap.exists() && hSnap.val().valid === false) {
+                                button.disabled = true; 
+                                button.innerHTML = "🔒"; 
                             } else {
-                                if(button){ button.disabled = false; button.innerHTML = "🔴 BAS"; } 
+                                button.disabled = false; 
+                                button.innerHTML = "🔴 BAS"; 
                                 if(status) status.innerHTML = "";
                             }
                         });
@@ -417,6 +430,7 @@ window.startGame = function(){
     if(!code) return alert("Əvvəlcə otaq yaradın!");
     
     remove(ref(db, "rooms/" + code + "/pressed"));
+    remove(ref(db, "rooms/" + code + "/pressedHistory"));
     set(ref(db, "rooms/" + code + "/resetSignal"), "clear");
     set(ref(db, "rooms/" + code + "/gameStarted"), true);
     set(ref(db, "rooms/" + code + "/timer"), { startTime: Date.now(), status: "started" }).then(() => {
@@ -447,6 +461,7 @@ window.resetGame = function(){
     
     set(ref(db, "rooms/" + code + "/gameStarted"), false); 
     remove(ref(db, "rooms/" + code + "/pressed"));
+    remove(ref(db, "rooms/" + code + "/pressedHistory"));
     set(ref(db, "rooms/" + code + "/timer"), { status: "stopped", startTime: 0 });
     set(ref(db, "rooms/" + code + "/resetSignal"), "clear"); 
     set(ref(db, "rooms/" + code + "/sound"), { type: "reset", time: Date.now() });
@@ -467,6 +482,7 @@ window.pressButton = function(){
             return { team: name, valid: started, time: Date.now() };
         }).then((result) => {
             if(result.committed){
+                set(ref(db, "rooms/" + code + "/pressedHistory/" + name), { valid: started });
                 if(started){
                     document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!"; 
                     set(ref(db, "rooms/" + code + "/sound"), { type: "press", time: Date.now() });
