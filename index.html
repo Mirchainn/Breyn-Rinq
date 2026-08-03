@@ -446,7 +446,7 @@ function showAdmin(){
 
 // Şifrəyə nəzarət (Əgər VIEW yazılarsa izləyici otaq kodu xanasını açır)
 document.getElementById("password").addEventListener("input", function(){
-    if(this.value.trim().toUpperCase() === "VIEW"){
+    if(this.value.trim().toUpperCase() === "MRS"){
         document.getElementById("spectatorCodeBox").style.display="block";
         isSpectator = true;
     } else {
@@ -466,7 +466,7 @@ function loginAdmin(){
     if(pass === "TMGRT"){
         hideAll();
         document.getElementById("adminPanel").style.display="block";
-    } else if(pass.toUpperCase() === "tmgrt"){
+    } else if(pass.toUpperCase() === "MRS"){
         let code = document.getElementById("spectatorRoomCode").value.trim();
         if(code === ""){
             alert("Zəhmət olmasa izləniləcək otaq kodunu daxil edin!");
