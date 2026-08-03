@@ -287,9 +287,13 @@ input:focus, select:focus {
 </div>
 
 <div id="adminPage" class="hidden">
-    <h2>👑 Admin giriş</h2>
-    <input id="password" type="password" placeholder="Şifrə">
+    <h2>👑 Admin / İzləyici giriş</h2>
+    <input id="password" type="password" placeholder="Şifrə (və ya İzləyici şifrəsi)">
     <br>
+    <div id="spectatorCodeBox" class="hidden">
+        <input id="spectatorRoomCode" placeholder="İzləniləcək Otaq Kodu">
+        <br>
+    </div>
     <button class="admin" onclick="loginAdmin()">DAXİL OL</button>
     <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
 </div>
@@ -324,7 +328,7 @@ input:focus, select:focus {
     </div>
 
     <h1 id="playerTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
-    <button class="team press-btn" onclick="pressButton()">🔴 BAS</button>
+    <button id="pressButtonElem" class="team press-btn" onclick="pressButton()">🔴 BAS</button>
     <h2 id="teamStatus"></h2>
     
     <div id="winnerOverlay">
@@ -401,6 +405,7 @@ input:focus, select:focus {
 
 <script>
 let timerInterval = null;
+let isSpectator = false; // İzləyici olub-olmadığını yoxlamaq üçün
 
 function startLocalTimer(startTime, duration = 20) {
     if (timerInterval) clearInterval(timerInterval);
@@ -433,31 +438,158 @@ function hideAll(){
 
 function showAdmin(){
     hideAll();
+    isSpectator = false;
     document.getElementById("adminPage").style.display="block";
+    document.getElementById("spectatorCodeBox").style.display="none";
+    document.getElementById("password").value = "";
 }
+
+// Şifrəyə nəzarət (Əgər VIEW yazılarsa izləyici otaq kodu xanasını açır)
+document.getElementById("password").addEventListener("input", function(){
+    if(this.value.trim().toUpperCase() === "VIEW"){
+        document.getElementById("spectatorCodeBox").style.display="block";
+        isSpectator = true;
+    } else {
+        document.getElementById("spectatorCodeBox").style.display="none";
+        isSpectator = false;
+    }
+});
 
 function showTeam(){
     hideAll();
+    isSpectator = false;
     document.getElementById("teamPage").style.display="block";
 }
 
 function loginAdmin(){
-    let pass=document.getElementById("password").value;
-    if(pass==="TMGRT"){
+    let pass = document.getElementById("password").value.trim();
+    if(pass === "TMGRT"){
         hideAll();
         document.getElementById("adminPanel").style.display="block";
+    } else if(pass.toUpperCase() === "tmgrt"){
+        let code = document.getElementById("spectatorRoomCode").value.trim();
+        if(code === ""){
+            alert("Zəhmət olmasa izləniləcək otaq kodunu daxil edin!");
+            return;
+        }
+        
+        // Brauzerin səs kilidini açırıq (izləyici səsləri eşitsin deyə)
+        ['startSound', 'resetSound', 'failSound', 'pressSound'].forEach(id => {
+            let s = document.getElementById(id);
+            if(s) { s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {}); }
+        });
+
+        hideAll();
+        document.getElementById("gamePage").style.display="block";
+        document.getElementById("myTeam").innerHTML = " 👀 İzləyici Rejimi";
+        
+        // İzləyici üçün BAS düyməsini gizlədirik
+        document.getElementById("pressButtonElem").style.display = "none";
+        document.getElementById("teamStatus").innerHTML = "Canlı izlənilir...";
+        
+        // Həmin otağın məlumatlarını dinləməyə başlayırıq
+        startSpectatorMode(code);
     } else {
         alert("Səhv şifrə");
     }
 }
 
+// İzləyici üçün dinləmə funksiyası
+function startSpectatorMode(code){
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref,onValue})=>{
+            
+            onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
+                let teams = snapshot.val() || {};
+                let green = "-";
+                let red = "-";
+                for(let team in teams){
+                    if(teams[team].table==="green") green = team;
+                    if(teams[team].table==="red") red = team;
+                }
+                let g2 = document.getElementById("greenTeamPlayer");
+                let r2 = document.getElementById("redTeamPlayer");
+                if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
+                if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
+            });
+
+            onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
+                let scores = snapshot.val() || { green:0, red:0 };
+                let gPlayer = document.getElementById("greenScorePlayer");
+                let rPlayer = document.getElementById("redScorePlayer");
+                if(gPlayer) gPlayer.innerHTML = scores.green;
+                if(rPlayer) rPlayer.innerHTML = scores.red;
+            });
+
+            onValue(ref(db, "rooms/" + code + "/timer"), (snapshot) => {
+                let tData = snapshot.val();
+                if (tData && tData.status === "started") {
+                    startLocalTimer(tData.startTime, tData.duration || 20);
+                } else {
+                    stopLocalTimer();
+                    if (tData && tData.duration !== undefined) {
+                        let pTimer = document.getElementById("playerTimer");
+                        if (pTimer) pTimer.innerHTML = tData.duration;
+                    }
+                }
+            });
+
+            onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
+                let data = snapshot.val();
+                let status = document.getElementById("teamStatus");
+                if(data){
+                    stopLocalTimer();
+                    if(data.valid===false){
+                        status.innerHTML="❌ "+data.team+" FAIL START etdi!";
+                    } else if(data.valid===true){
+                        status.innerHTML="🔴 "+data.team+" basdı!";
+                    }
+                } else {
+                    status.innerHTML="Canlı izlənilir...";
+                }
+            });
+
+            onValue(ref(db,"rooms/"+code+"/resetSignal"),(snapshot)=>{
+                let signal = snapshot.val();
+                if(!signal) return;
+                let status = document.getElementById("teamStatus");
+                if(signal.type === "reset" || signal.type === "next"){
+                    if(status) status.innerHTML = "Canlı izlənilir...";
+                }
+            });
+
+            onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
+                let sound = snapshot.val();
+                if (!sound) return;
+                let sElem = document.getElementById(sound.type === "start" ? "startSound" : sound.type === "reset" ? "resetSound" : sound.type === "fail" ? "failSound" : "pressSound");
+                if(sElem){
+                    sElem.currentTime = 0;
+                    sElem.play().catch(()=>{});
+                }
+            });
+            
+            onValue(ref(db,"rooms/"+code+"/globalWinner"),(snapshot)=>{
+                let winnerColor = snapshot.val();
+                let overlay = document.getElementById("winnerOverlay");
+                let msg = document.getElementById("winnerMessage");
+                if(winnerColor){
+                    overlay.style.display = "flex";
+                    msg.innerHTML = "🏆 OYUN BİTDİ 🏆<br><span style='font-size:30px'>" + (winnerColor === 'green' ? "🟢 Yaşıl Masa" : "🔴 Qırmızı Masa") + " qalib oldu!</span>";
+                    msg.className = "win-text";
+                } else {
+                    overlay.style.display = "none";
+                }
+            });
+        });
+    });
+}
+
 function createRoom(){
-    // "OTAQ YARAT" düyməsinə kliklənən kimi admin üçün audio kilidini avtomatik açırıq (autoplay kilidini aşmaq üçün)
     ['startSound', 'resetSound', 'failSound', 'pressSound'].forEach(id => {
         let s = document.getElementById(id);
-        if(s) {
-            s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {});
-        }
+        if(s) { s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {}); }
     });
 
     let code = Math.floor(1000 + Math.random()*9000);
@@ -591,6 +723,9 @@ function joinRoom(){
 
                         document.getElementById("teamPage").style.display="none";
                         document.getElementById("gamePage").style.display="block";
+
+                        // Komanda daxil olanda BAS düyməsini göstərək (əgər əvvəl izləyici kimi gizlədilibsə)
+                        document.getElementById("pressButtonElem").style.display = "inline-block";
 
                         set(ref(db,"rooms/"+code+"/teams/"+name),{ table:color });
 
@@ -810,6 +945,7 @@ function resetGame(){
 }
 
 function pressButton(){
+    if(isSpectator) return; // İzləyicidirsə basmağa icazə yoxdur
     let name = document.getElementById("teamName").value;
     let code = document.getElementById("roomCode").value;
 
@@ -842,7 +978,7 @@ function pressButton(){
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"press", time:Date.now() });
                         } else {
                             document.getElementById("teamStatus").innerHTML = "❌ FAIL START";
-                            set(ref(db,"rooms/"+code+"/sound"),{ type:"fail", time:Date.now() });
+                            set(ref(db,"rooms/"+code,"sound"),{ type:"fail", time:Date.now() });
                         }
                     } else {
                         document.getElementById("teamStatus").innerHTML = "⛔ Başqa komanda cavab verdi.";
@@ -865,7 +1001,7 @@ function changeScore(color, amount){
                 scores[color] += amount;
                 if(scores[color] < 0) scores[color] = 0;
                 if(scores.green > 5) scores.green = 5;
-                if(scores.red > 5) scores.red > 5 ? scores.red = 5 : null;
+                if(scores.red > 5) scores.red = 5;
                 set(ref(db,"rooms/"+code+"/scores"),scores);
             });
         });
