@@ -82,11 +82,6 @@ button:active {
 }
 
 /* Köməkçi düymələr */
-.soundBtn {
-    background: linear-gradient(135deg,#64748b,#334155) !important;
-    color:white !important;
-}
-
 .backBtn {
     background: linear-gradient(135deg,#64748b,#334155) !important;
     color:white !important;
@@ -130,7 +125,7 @@ input:focus, select:focus {
     box-shadow: 0 0 25px rgba(250,204,21,.25);
 }
 
-/* Qalib yazısı (Sürətli cavabda çıxan) */
+/* Qalib yazısı */
 #winner {
     font-size:35px;
     color:#38bdf8;
@@ -272,7 +267,6 @@ input:focus, select:focus {
     line-height: 1.2;
 }
 
-/* Animasiya */
 @keyframes pulse {
     0% { transform:scale(1); }
     50% { transform:scale(1.05); }
@@ -311,7 +305,6 @@ input:focus, select:focus {
         <option value="red">🔴 Qırmızı masa</option>
     </select>
     <br>
-    <button class="soundBtn" onclick="unlockSound('team')">🔊 SƏSİ YOXLA</button>
     <button class="team" onclick="joinRoom()">QOŞUL</button>
     <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
 </div>
@@ -334,7 +327,6 @@ input:focus, select:focus {
     <button class="team press-btn" onclick="pressButton()">🔴 BAS</button>
     <h2 id="teamStatus"></h2>
     
-    <!-- YEKUN QALİB EKRANI -->
     <div id="winnerOverlay">
         <div id="winnerMessage"></div>
     </div>
@@ -343,10 +335,6 @@ input:focus, select:focus {
 <div id="adminPanel" class="hidden">
     <h2>👑 Admin panel</h2>
     <button class="admin" onclick="createRoom()">OTAQ YARAT</button>
-    <br>
-    <!-- Admin üçün də səsin kilidini açan düymə əlavə olundu -->
-    <button class="soundBtn" onclick="unlockSound('admin')">🔊 SƏSİ YOXLA (ADMİN)</button>
-    
     <br>
     <h3 id="roomDisplay" class="hidden"></h3>
 
@@ -372,13 +360,11 @@ input:focus, select:focus {
     </div>
 </div>
 
-<!-- Kompakt Xallar Səhifəsi -->
 <div id="scorePage" class="hidden">
     <h2>🏆 Xallar</h2>
 
     <div class="info-card">
         <div class="score-grid">
-            <!-- Yaşıl Masa -->
             <div class="score-card green">
                 <div>
                     <h4 id="scoreGreenName">🟢 Yaşıl Masa</h4>
@@ -388,11 +374,9 @@ input:focus, select:focus {
                         <button class="team" onclick="changeScore('green',1)">➕</button>
                     </div>
                 </div>
-                <!-- Qalib Seç düyməsi -->
                 <button style="width:100%; margin:15px 0 0 0 !important; padding:12px !important; font-size:18px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:12px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('green')">🏆 Qalib Seç</button>
             </div>
 
-            <!-- Qırmızı Masa -->
             <div class="score-card red">
                 <div>
                     <h4 id="scoreRedName">🔴 Qırmızı Masa</h4>
@@ -402,7 +386,6 @@ input:focus, select:focus {
                         <button class="admin" style="background:#dc2626;" onclick="changeScore('red',1)">➕</button>
                     </div>
                 </div>
-                <!-- Qalib Seç düyməsi -->
                 <button style="width:100%; margin:15px 0 0 0 !important; padding:12px !important; font-size:18px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:12px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('red')">🏆 Qalib Seç</button>
             </div>
         </div>
@@ -413,8 +396,6 @@ input:focus, select:focus {
         </div>
     </div>
 </div>
-
-<div id="status"></div>
 
 </div>
 
@@ -471,6 +452,14 @@ function loginAdmin(){
 }
 
 function createRoom(){
+    // "OTAQ YARAT" düyməsinə kliklənən kimi admin üçün audio kilidini avtomatik açırıq (autoplay kilidini aşmaq üçün)
+    ['startSound', 'resetSound', 'failSound', 'pressSound'].forEach(id => {
+        let s = document.getElementById(id);
+        if(s) {
+            s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {});
+        }
+    });
+
     let code = Math.floor(1000 + Math.random()*9000);
     let rDisp = document.getElementById("roomDisplay");
     rDisp.style.display = "inline-block";
@@ -562,18 +551,14 @@ function listenPress(code){
                 }
             });
 
-            let startSound = document.getElementById("startSound");
-            let resetSound = document.getElementById("resetSound");
-            let failSound = document.getElementById("failSound");
-            let pressSound = document.getElementById("pressSound");
-
             onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
                 let sound = snapshot.val();
                 if (!sound) return;
-                if (sound.type === "start" && startSound) { startSound.currentTime = 0; startSound.play().catch(()=>{}); }
-                if (sound.type === "reset" && resetSound) { resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
-                if (sound.type === "fail" && failSound) { failSound.currentTime = 0; failSound.play().catch(()=>{}); }
-                if (sound.type === "press" && pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
+                let sElem = document.getElementById(sound.type === "start" ? "startSound" : sound.type === "reset" ? "resetSound" : sound.type === "fail" ? "failSound" : "pressSound");
+                if(sElem){
+                    sElem.currentTime = 0;
+                    sElem.play().catch(()=>{});
+                }
             });
         });
     });
@@ -710,18 +695,14 @@ function joinRoom(){
                             }
                         });
 
-                        let startSound = document.getElementById("startSound");
-                        let resetSound = document.getElementById("resetSound");
-                        let failSound = document.getElementById("failSound");
-                        let pressSound = document.getElementById("pressSound");
-
                         onValue(ref(db, "rooms/" + code + "/sound"), (snapshot) => {
                             let sound = snapshot.val();
                             if (!sound) return;
-                            if (sound.type === "start" && startSound) { startSound.currentTime = 0; startSound.play().catch(()=>{}); }
-                            if (sound.type === "reset" && resetSound) { resetSound.currentTime = 0; resetSound.play().catch(()=>{}); }
-                            if (sound.type === "fail" && failSound) { failSound.currentTime = 0; failSound.play().catch(()=>{}); }
-                            if (sound.type === "press" && pressSound) { pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
+                            let sElem = document.getElementById(sound.type === "start" ? "startSound" : sound.type === "reset" ? "resetSound" : sound.type === "fail" ? "failSound" : "pressSound");
+                            if(sElem){
+                                sElem.currentTime = 0;
+                                sElem.play().catch(()=>{});
+                            }
                         });
                         
                         onValue(ref(db,"rooms/"+code+"/globalWinner"),(snapshot)=>{
@@ -763,12 +744,6 @@ function startGame(){
                 set(ref(db, "rooms/" + code + "/timer"), { startTime: Date.now(), duration: 20, status: "started" });
                 set(ref(db,"rooms/"+code+"/resetSignal"),{ type: "reset", time: Date.now() });
                 set(ref(db,"rooms/"+code+"/sound"),{ type:"start", time:Date.now() });
-                
-                let startSound = document.getElementById("startSound");
-                if(startSound){
-                    startSound.currentTime = 0;
-                    startSound.play().catch(()=>{});
-                }
             });
         });
     });
@@ -828,12 +803,6 @@ function resetGame(){
             set(ref(db,"rooms/"+code+"/resetSignal"),{ type: "reset", time: Date.now() });
             set(ref(db,"rooms/"+code+"/sound"),{ type:"reset", time:Date.now() });
 
-            let resetSound = document.getElementById("resetSound");
-            if(resetSound){
-                resetSound.currentTime = 0;
-                resetSound.play().catch(()=>{});
-            }
-
             let winner = document.getElementById("winner");
             if(winner) winner.innerHTML="";
         });
@@ -871,15 +840,9 @@ function pressButton(){
                         if(started){
                             document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!";
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"press", time:Date.now() });
-                            
-                            let pressSound = document.getElementById("pressSound");
-                            if(pressSound){ pressSound.currentTime = 0; pressSound.play().catch(()=>{}); }
                         } else {
                             document.getElementById("teamStatus").innerHTML = "❌ FAIL START";
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"fail", time:Date.now() });
-                            
-                            let failSound = document.getElementById("failSound");
-                            if(failSound){ failSound.currentTime = 0; failSound.play().catch(()=>{}); }
                         }
                     } else {
                         document.getElementById("teamStatus").innerHTML = "⛔ Başqa komanda cavab verdi.";
@@ -888,20 +851,6 @@ function pressButton(){
             });
         });
     });
-}
-
-function unlockSound(role){
-    let sound = document.getElementById("startSound");
-    if(sound){
-        sound.currentTime = 0;
-        sound.play().then(()=>{
-            sound.pause();
-            sound.currentTime = 0;
-            alert(role === 'admin' ? "Admin səsi aktiv edildi ✅" : "Komanda səsi aktiv edildi ✅");
-        }).catch((error)=>{
-            alert("Səs aktiv olmadı ❌");
-        });
-    }
 }
 
 function changeScore(color, amount){
@@ -916,7 +865,7 @@ function changeScore(color, amount){
                 scores[color] += amount;
                 if(scores[color] < 0) scores[color] = 0;
                 if(scores.green > 5) scores.green = 5;
-                if(scores.red > 5) scores.red = 5;
+                if(scores.red > 5) scores.red > 5 ? scores.red = 5 : null;
                 set(ref(db,"rooms/"+code+"/scores"),scores);
             });
         });
