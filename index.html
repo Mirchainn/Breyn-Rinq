@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Brain Ring - Studio Edition</title>
+<title>Brain Ring - Cyber Studio</title>
 <style>
 * {
     box-sizing: border-box;
@@ -12,98 +12,104 @@
 body {
     margin: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: radial-gradient(circle at top, #1e293b, #020617 75%);
-    color: white;
+    background: #030712;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.15) 0%, transparent 40%);
+    color: #f8fafc;
     text-align: center;
     min-height: 100vh;
-    padding-bottom: 30px;
+    padding-bottom: 40px;
 }
 
 .box {
     padding: 15px;
-    max-width: 550px;
+    max-width: 520px;
     margin: auto;
 }
 
-/* Başlıqlar */
+/* Cyber Başlıqlar */
 h1 {
-    font-size: 45px;
-    margin: 25px 0;
-    background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
+    font-size: 42px;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #38bdf8, #818cf8, #f472b6);
     -webkit-background-clip: text;
     color: transparent;
-    letter-spacing: 2px;
-    filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.5));
+    letter-spacing: 3px;
+    filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.6));
     font-weight: 900;
 }
 
 h2 {
-    font-size: 28px;
-    margin: 20px 0;
+    font-size: 26px;
+    margin: 15px 0;
+    color: #e2e8f0;
+    letter-spacing: 1px;
 }
 
-h3 {
-    font-size: 24px;
-    color: #facc15;
-}
-
-/* Ümumi Düymələr */
+/* Cyber Glass Düymələr */
 button {
     width: 90%;
-    max-width: 400px;
-    padding: 18px;
-    margin: 12px auto;
-    border: none;
-    border-radius: 20px;
-    font-size: 22px;
+    max-width: 380px;
+    padding: 16px;
+    margin: 10px auto;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    font-size: 20px;
     font-weight: 800;
     color: white;
     cursor: pointer;
-    transition: 0.25s;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
     display: block;
 }
 
 button:hover {
-    transform: translateY(-3px);
-    filter: brightness(1.1);
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
 }
 
 button:active {
-    transform: scale(0.96);
+    transform: scale(0.97);
 }
 
 .admin {
-    background: linear-gradient(135deg, #22c55e, #15803d);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.8), rgba(21, 128, 61, 0.9));
+    border-color: rgba(34, 197, 94, 0.5);
 }
 
 .team {
-    background: linear-gradient(135deg, #2563eb, #1e40af);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.8), rgba(30, 64, 175, 0.9));
+    border-color: rgba(59, 130, 246, 0.5);
 }
 
 .backBtn {
-    background: linear-gradient(135deg, #64748b, #334155) !important;
+    background: linear-gradient(135deg, rgba(100, 116, 139, 0.8), rgba(51, 65, 85, 0.9)) !important;
 }
 
 /* Input və Select */
 input, select {
     width: 90%;
     max-width: 380px;
-    padding: 16px;
+    padding: 15px;
     margin: 10px auto;
-    border: 2px solid #334155;
-    border-radius: 16px;
-    background: #0f172a;
+    border: 2px solid rgba(51, 65, 85, 0.8);
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.8);
     color: #fff;
     font-size: 18px;
     text-align: center;
     outline: none;
     display: block;
+    backdrop-filter: blur(5px);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
 }
 
 input:focus, select:focus {
     border-color: #38bdf8;
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.5), inset 0 2px 5px rgba(0,0,0,0.5);
 }
 
 .hidden {
@@ -113,56 +119,57 @@ input:focus, select:focus {
 /* Otaq Kodu Ekranı */
 #roomDisplay {
     display: inline-block;
-    padding: 12px 22px;
-    border-radius: 16px;
-    background: rgba(15, 23, 42, 0.9);
+    padding: 12px 24px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.95);
     color: #facc15;
-    font-size: 28px;
-    margin: 15px 0;
-    border: 1px solid #facc15;
-    box-shadow: 0 0 20px rgba(250,204,21,0.3);
-}
-
-/* Status */
-#teamStatus {
     font-size: 26px;
-    margin: 20px 0;
+    margin: 15px 0;
+    border: 2px solid #facc15;
+    box-shadow: 0 0 25px rgba(250, 204, 21, 0.4);
+    letter-spacing: 2px;
     font-weight: bold;
-    min-height: 40px;
 }
 
-/* BAS Düyməsi (Böyük Qırmızı/Yaşıl Studio düyməsi) */
+#teamStatus {
+    font-size: 24px;
+    margin: 15px 0;
+    font-weight: bold;
+    min-height: 35px;
+}
+
+/* Oyunçunun BAS Düyməsi (Cyber Neon Pulsing) */
 #gamePage button.press-btn {
-    width: 210px;
-    height: 210px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
-    font-size: 40px;
-    background: radial-gradient(circle at 30% 25%, #f87171, #dc2626 50%, #7f1d1d);
-    box-shadow: 0 0 50px rgba(239,68,68,0.7), inset 0 0 25px rgba(255,255,255,0.3);
-    border: 5px solid #ef4444;
+    font-size: 36px;
+    background: radial-gradient(circle at 35% 30%, #f87171, #dc2626 60%, #450a0a);
+    box-shadow: 0 0 50px rgba(239, 68, 68, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.4);
+    border: 4px solid #fca5a5;
     margin: 20px auto;
 }
 
 #gamePage button.press-btn:disabled {
-    background: radial-gradient(circle at 30% 25%, #64748b, #334155 50%, #0f172a);
+    background: radial-gradient(circle at 35% 30%, #475569, #1e293b 60%, #0f172a);
     box-shadow: none;
-    border-color: #475569;
+    border-color: #64748b;
     cursor: not-allowed;
 }
 
-/* Studio Məlumat Kartları */
+/* Glassmorphism Kartları */
 .info-card {
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid #334155;
-    backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
     border-radius: 20px;
-    padding: 16px;
+    padding: 15px;
     margin: 15px auto;
     max-width: 480px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
 }
 
-/* Xallar Şəbəkəsi (Düzəldilmiş səliqəli dizayn) */
+/* Xallar Şəbəkəsi */
 .score-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -171,32 +178,34 @@ input:focus, select:focus {
 }
 
 .score-card {
-    background: rgba(30, 41, 59, 0.95);
+    background: rgba(30, 41, 59, 0.7);
     border-radius: 16px;
     padding: 12px 8px;
-    border: 2px solid #475569;
+    border: 2px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    backdrop-filter: blur(10px);
 }
 
-.score-card.green { border-color: #22c55e; box-shadow: 0 0 15px rgba(34,197,94,0.15); }
-.score-card.red { border-color: #ef4444; box-shadow: 0 0 15px rgba(239,68,68,0.15); }
+.score-card.green { border-color: rgba(34, 197, 94, 0.6); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+.score-card.red { border-color: rgba(239, 68, 68, 0.6); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
 
 .score-card h4 {
     margin: 0 0 5px 0;
-    font-size: 15px;
+    font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #cbd5e1;
+    color: #94a3b8;
 }
 
 .score-card .score-num {
-    font-size: 32px;
+    font-size: 34px;
     font-weight: 900;
     margin: 5px 0;
     color: #f8fafc;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
 }
 
 .score-actions {
@@ -225,16 +234,17 @@ input:focus, select:focus {
     width: auto !important;
     padding: 14px 20px !important;
     margin: 0 !important;
-    background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.8), rgba(153, 27, 27, 0.9)) !important;
     font-size: 20px !important;
     border-radius: 14px !important;
+    border-color: rgba(239, 68, 68, 0.5);
 }
 
-/* Yekun Qalib Pəncərəsi */
+/* Yekun Qalib Pəncərəsi (Cyber Overlay) */
 #winnerOverlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at center, rgba(30,41,59,0.95) 0%, rgba(2,6,23,0.98) 100%);
+    background: radial-gradient(circle at center, rgba(15,23,42,0.95) 0%, rgba(3,7,18,0.98) 100%);
     z-index: 9999;
     display: none;
     flex-direction: column;
@@ -242,28 +252,31 @@ input:focus, select:focus {
     align-items: center;
     text-align: center;
     padding: 20px;
+    backdrop-filter: blur(10px);
 }
 
 .win-text {
-    font-size: 50px;
+    font-size: 46px;
     margin: 20px 0;
     color: #facc15;
-    text-shadow: 0 0 35px rgba(250, 204, 21, 0.7);
+    text-shadow: 0 0 40px rgba(250, 204, 21, 0.8);
     animation: pulse 1s infinite;
     line-height: 1.2;
+    font-weight: 900;
 }
 
 .lose-text {
-    font-size: 35px;
+    font-size: 32px;
     margin: 20px 0;
     color: #94a3b8;
     line-height: 1.2;
+    font-weight: bold;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-    100% { transform: scale(1); }
+    0% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(250,204,21,0.5)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(250,204,21,0.9)); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(250,204,21,0.5)); }
 }
 </style>
 </head>
@@ -273,7 +286,7 @@ input:focus, select:focus {
 <div class="box">
 
 <div id="main">
-    <h1>🧠 Brain Ring</h1>
+    <h1>🧠 BRAIN RING</h1>
     <button class="admin" onclick="showAdmin()">👑 Aparıcı</button>
     <button class="team" onclick="showTeam()">👥 Komanda</button>
 </div>
@@ -305,16 +318,16 @@ input:focus, select:focus {
     
     <div class="info-card">
         <div style="display:flex; justify-content:space-around; font-size:16px; font-weight:bold;">
-            <div id="greenTeamPlayer">🟢 Yaşıl: -</div>
-            <div id="redTeamPlayer">🔴 Qırmızı: -</div>
+            <div id="greenTeamPlayer" style="color:#4ade80;">🟢 Yaşıl: -</div>
+            <div id="redTeamPlayer" style="color:#f87171;">🔴 Qırmızı: -</div>
         </div>
-        <hr style="border-color:#334155; margin:10px 0;">
-        <div style="font-size:22px; font-weight:900;">
+        <hr style="border-color:rgba(255,255,255,0.1); margin:12px 0;">
+        <div style="font-size:24px; font-weight:900; letter-spacing: 1px;">
             🟢 <span id="greenScorePlayer">0</span> &nbsp;&nbsp;:&nbsp;&nbsp; <span id="redScorePlayer">0</span> 🔴
         </div>
     </div>
 
-    <h1 id="playerTimer" style="font-size: 50px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
+    <h1 id="playerTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900; text-shadow: 0 0 20px rgba(250,204,21,0.5);">20</h1>
     <button id="pressButtonElem" class="team press-btn" onclick="pressButton()">🔴 BAS</button>
     <h2 id="teamStatus"></h2>
     
@@ -331,22 +344,22 @@ input:focus, select:focus {
 
     <div class="info-card">
         <div style="display:flex; justify-content:space-around; font-size:16px; font-weight:bold;">
-            <div id="greenTeam">🟢 Yaşıl: -</div>
-            <div id="redTeam">🔴 Qırmızı: -</div>
+            <div id="greenTeam" style="color:#4ade80;">🟢 Yaşıl: -</div>
+            <div id="redTeam" style="color:#f87171;">🔴 Qırmızı: -</div>
         </div>
     </div>
 
-    <h2 id="winner" style="font-size: 26px; color: #38bdf8; margin: 15px 0;"></h2>
+    <h2 id="winner" style="font-size: 26px; color: #38bdf8; margin: 15px 0; text-shadow: 0 0 15px rgba(56,189,248,0.5);"></h2>
 
-    <h1 id="adminTimer" style="font-size: 50px; color: #facc15; margin: 10px 0; font-weight: 900;">20</h1>
+    <h1 id="adminTimer" style="font-size: 55px; color: #facc15; margin: 10px 0; font-weight: 900; text-shadow: 0 0 20px rgba(250,204,21,0.5);">20</h1>
     
     <div style="display:flex; justify-content:center; gap:8px;">
         <button class="admin" style="width:48%; margin:5px 0;" onclick="startGame()">START</button>
-        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,#eab308,#ca8a04);" onclick="continueGame()">NEXT</button>
+        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,rgba(234,179,8,0.8),rgba(202,138,4,0.9)); border-color:rgba(234,179,8,0.5);" onclick="continueGame()">NEXT</button>
     </div>
     <div style="display:flex; justify-content:center; gap:8px;">
-        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,#ef4444,#b91c1c);" onclick="resetGame()">RESET</button>
-        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,#8b5cf6,#6d28d9);" onclick="showScores()">🏆 XALLAR</button>
+        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,rgba(239,68,68,0.8),rgba(185,28,28,0.9)); border-color:rgba(239,68,68,0.5);" onclick="resetGame()">RESET</button>
+        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,rgba(139,92,246,0.8),rgba(109,40,217,0.9)); border-color:rgba(139,92,246,0.5);" onclick="showScores()">🏆 XALLAR</button>
     </div>
 </div>
 
@@ -364,7 +377,7 @@ input:focus, select:focus {
                         <button class="team" onclick="changeScore('green',1)">➕</button>
                     </div>
                 </div>
-                <button style="width:100%; margin:10px 0 0 0 !important; padding:10px !important; font-size:15px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('green')">🏆 Qalib Et</button>
+                <button style="width:100%; margin:10px 0 0 0 !important; padding:10px !important; font-size:14px !important; background:linear-gradient(135deg,rgba(234,179,8,0.8),rgba(202,138,4,0.9)); border-radius:10px; color:white; font-weight:bold; border:1px solid rgba(234,179,8,0.5); cursor:pointer;" onclick="declareWinner('green')">🏆 Qalib Et</button>
             </div>
 
             <div class="score-card red">
@@ -372,11 +385,11 @@ input:focus, select:focus {
                     <h4 id="scoreRedName">🔴 Qırmızı Masa</h4>
                     <div class="score-num" id="redScore">0</div>
                     <div class="score-actions">
-                        <button class="admin" style="background:#dc2626;" onclick="changeScore('red',-1)">➖</button>
-                        <button class="admin" style="background:#dc2626;" onclick="changeScore('red',1)">➕</button>
+                        <button class="admin" style="background:linear-gradient(135deg,rgba(220,38,38,0.8),rgba(153,27,27,0.9));" onclick="changeScore('red',-1)">➖</button>
+                        <button class="admin" style="background:linear-gradient(135deg,rgba(220,38,38,0.8),rgba(153,27,27,0.9));" onclick="changeScore('red',1)">➕</button>
                     </div>
                 </div>
-                <button style="width:100%; margin:10px 0 0 0 !important; padding:10px !important; font-size:15px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('red')">🏆 Qalib Et</button>
+                <button style="width:100%; margin:10px 0 0 0 !important; padding:10px !important; font-size:14px !important; background:linear-gradient(135deg,rgba(234,179,8,0.8),rgba(202,138,4,0.9)); border-radius:10px; color:white; font-weight:bold; border:1px solid rgba(234,179,8,0.5); cursor:pointer;" onclick="declareWinner('red')">🏆 Qalib Et</button>
             </div>
         </div>
 
@@ -524,11 +537,14 @@ function startSpectatorMode(code){
                     stopLocalTimer();
                     if(data.valid===false){
                         status.innerHTML="❌ "+data.team+" FAIL START!";
+                        status.style.color="#f87171";
                     } else if(data.valid===true){
                         status.innerHTML="🔴 "+data.team+" basdı!";
+                        status.style.color="#4ade80";
                     }
                 } else {
                     status.innerHTML="Canlı izlənilir...";
+                    status.style.color="#94a3b8";
                 }
             });
 
@@ -537,7 +553,7 @@ function startSpectatorMode(code){
                 if(!signal) return;
                 let status = document.getElementById("teamStatus");
                 if(signal.type === "reset" || signal.type === "next"){
-                    if(status) status.innerHTML = "Canlı izlənilir...";
+                    if(status) { status.innerHTML = "Canlı izlənilir..."; status.style.color="#94a3b8"; }
                 }
             });
 
@@ -557,7 +573,7 @@ function startSpectatorMode(code){
                 let msg = document.getElementById("winnerMessage");
                 if(winnerColor){
                     overlay.style.display = "flex";
-                    msg.innerHTML = "🏆 OYUN BİTDİ 🏆<br><span style='font-size:26px'>" + (winnerColor === 'green' ? "🟢 Yaşıl Masa" : "🔴 Qırmızı Masa") + " qalib oldu!</span>";
+                    msg.innerHTML = "🏆 OYUN BİTDİ 🏆<br><span style='font-size:24px'>" + (winnerColor === 'green' ? "🟢 Yaşıl Masa" : "🔴 Qırmızı Masa") + " qalib oldu!</span>";
                     msg.className = "win-text";
                 } else {
                     overlay.style.display = "none";
@@ -600,12 +616,15 @@ function listenPress(code){
             
             onValue(ref(db,"rooms/"+code+"/pressed"),(snapshot)=>{
                 let data = snapshot.val();
+                let winElem = document.getElementById("winner");
                 if(data){
                     stopLocalTimer();
                     if(data.valid === true){
-                        document.getElementById("winner").innerHTML = "🔴 " + data.team + " BASDI!";
+                        winElem.innerHTML = "🔴 " + data.team + " BASDI!";
+                        winElem.style.color = "#4ade80";
                     }else{
-                        document.getElementById("winner").innerHTML = "⚠️ " + data.team + " FAIL";
+                        winElem.innerHTML = "⚠️ " + data.team + " FAIL";
+                        winElem.style.color = "#f87171";
                     }
                 }
             });
@@ -713,9 +732,9 @@ function joinRoom(){
 
                         let playButton = document.querySelector("#gamePage button.press-btn");
                         if(color==="green"){
-                            playButton.style.background = "radial-gradient(circle at 30% 25%, #4ade80, #16a34a 50%, #14532d)";
-                            playButton.style.boxShadow = "0 0 50px rgba(34,197,94,0.7), inset 0 0 25px rgba(255,255,255,0.3)";
-                            playButton.style.borderColor = "#22c55e";
+                            playButton.style.background = "radial-gradient(circle at 35% 30%, #4ade80, #16a34a 60%, #064e3b)";
+                            playButton.style.boxShadow = "0 0 50px rgba(34,197,94,0.8), inset 0 0 25px rgba(255,255,255,0.4)";
+                            playButton.style.borderColor = "#a7f3d0";
                         }
 
                         let status = document.getElementById("teamStatus");
@@ -774,14 +793,18 @@ function joinRoom(){
                                 if(data.valid===false){
                                     if(data.team===name){
                                         status.innerHTML="❌ FAIL START";
+                                        status.style.color="#f87171";
                                     } else {
                                         status.innerHTML="❌ "+data.team+" FAIL!";
+                                        status.style.color="#f87171";
                                     }
                                 } else if(data.valid===true){
                                     if(data.team===name){
                                         status.innerHTML="✅ Siz ilk basdınız!";
+                                        status.style.color="#4ade80";
                                     } else {
                                         status.innerHTML="🔴 "+data.team+" basdı!";
+                                        status.style.color="#f87171";
                                     }
                                 }
                             }
@@ -795,16 +818,16 @@ function joinRoom(){
                                 if(signal.type === "reset"){
                                     button.disabled = false;
                                     button.innerHTML = "🔴 BAS";
-                                    if(status) status.innerHTML = "";
+                                    if(status) { status.innerHTML = ""; status.style.color="#f87171"; }
                                 } else if(signal.type === "next"){
                                     if(signal.blockedTeam === name){
                                         button.disabled = true;
                                         button.innerHTML = "🔒";
-                                        if(status) status.innerHTML = "⛔ Şansınızı itirdiniz!";
+                                        if(status) { status.innerHTML = "⛔ Şansınızı itirdiniz!"; status.style.color="#f87171"; }
                                     } else {
                                         button.disabled = false;
                                         button.innerHTML = "🔴 BAS";
-                                        if(status) status.innerHTML = "";
+                                        if(status) { status.innerHTML = ""; status.style.color="#f87171"; }
                                     }
                                 }
                             }
@@ -828,10 +851,10 @@ function joinRoom(){
                             if(winnerColor){
                                 overlay.style.display = "flex";
                                 if(winnerColor === color){
-                                    msg.innerHTML = "🏆 TƏBRİKLƏR! 🏆<br><span style='font-size:26px'>SİZ QALİB OLDUNUZ!</span>";
+                                    msg.innerHTML = "🏆 TƏBRİKLƏR! 🏆<br><span style='font-size:24px'>SİZ QALİB OLDUNUZ!</span>";
                                     msg.className = "win-text";
                                 } else {
-                                    msg.innerHTML = "❌ OYUN BİTDİ ❌<br><span style='font-size:26px'>Rəqib komanda qalib oldu.</span>";
+                                    msg.innerHTML = "❌ OYUN BİTDİ ❌<br><span style='font-size:24px'>Rəqib komanda qalib oldu.</span>";
                                     msg.className = "lose-text";
                                 }
                             } else {
@@ -955,13 +978,16 @@ function pressButton(){
 
                         if(started){
                             document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!";
+                            document.getElementById("teamStatus").style.color = "#4ade80";
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"press", time:Date.now() });
                         } else {
                             document.getElementById("teamStatus").innerHTML = "❌ FAIL START";
+                            document.getElementById("teamStatus").style.color = "#f87171";
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"fail", time:Date.now() });
                         }
                     } else {
                         document.getElementById("teamStatus").innerHTML = "⛔ Başqa komanda cavab verdi.";
+                        document.getElementById("teamStatus").style.color = "#f87171";
                     }
                 });
             });
