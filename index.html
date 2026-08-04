@@ -3,16 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Brain Ring - Elite Studio</title>
+<title>Brain Ring - Pro Studio</title>
 <style>
-:root {
-    --bg-deep: #050508;
-    --surface: rgba(18, 18, 26, 0.7);
-    --border-glass: rgba(255, 255, 255, 0.08);
-    --accent-silver: #94a3b8;
-    --text-main: #f1f5f9;
-}
-
 * {
     box-sizing: border-box;
 }
@@ -20,11 +12,11 @@
 body {
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--bg-deep);
+    background: #060810;
     background-image: 
-        radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.5) 0%, transparent 60%),
-        radial-gradient(circle at 10% 90%, rgba(15, 23, 42, 0.8) 0%, transparent 50%);
-    color: var(--text-main);
+        radial-gradient(circle at 50% 10%, rgba(30, 41, 59, 0.4) 0%, transparent 60%),
+        radial-gradient(circle at 10% 90%, rgba(15, 23, 42, 0.7) 0%, transparent 50%);
+    color: #f8fafc;
     text-align: center;
     min-height: 100vh;
     padding-bottom: 40px;
@@ -36,48 +28,49 @@ body {
     margin: auto;
 }
 
-/* Premium Başlıqlar */
+/* Başlıqlar */
 h1 {
-    font-size: 36px;
+    font-size: 38px;
     margin: 25px 0;
-    color: #ffffff;
-    letter-spacing: 4px;
+    background: linear-gradient(135deg, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: 3px;
     font-weight: 800;
-    text-transform: uppercase;
-    text-shadow: 0 2px 20px rgba(255, 255, 255, 0.15);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 h2 {
     font-size: 22px;
     margin: 15px 0;
-    color: #cbd5e1;
+    color: #e2e8f0;
     letter-spacing: 1px;
     font-weight: 600;
 }
 
-/* Elite Glass Düymələr */
+/* Premium Düymələr */
 button {
     width: 90%;
     max-width: 360px;
-    padding: 15px 20px;
+    padding: 16px;
     margin: 10px auto;
-    border: 1px solid var(--border-glass);
-    border-radius: 12px;
-    font-size: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    font-size: 17px;
     font-weight: 700;
     color: #fff;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     display: block;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 button:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.6);
 }
 
 button:active {
@@ -86,27 +79,29 @@ button:active {
 
 .admin {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
-    border-color: rgba(148, 163, 184, 0.2);
+    border-color: rgba(56, 189, 248, 0.3);
 }
 
 .team {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(3, 7, 18, 0.95));
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.85), rgba(29, 78, 216, 0.95));
+    border-color: rgba(96, 165, 250, 0.3);
 }
 
 .backBtn {
-    background: rgba(30, 41, 59, 0.5) !important;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.8), rgba(30, 41, 59, 0.9)) !important;
+    border-color: rgba(148, 163, 184, 0.2) !important;
     color: #94a3b8 !important;
 }
 
-/* Input və Select - Premium Dark */
+/* Input və Select */
 input, select {
     width: 90%;
     max-width: 360px;
-    padding: 14px 16px;
+    padding: 15px;
     margin: 10px auto;
-    border: 1px solid var(--border-glass);
-    border-radius: 12px;
-    background: rgba(10, 10, 15, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(11, 15, 25, 0.85);
     color: #fff;
     font-size: 16px;
     text-align: center;
@@ -117,8 +112,8 @@ input, select {
 }
 
 input:focus, select:focus {
-    border-color: #64748b;
-    box-shadow: 0 0 15px rgba(100, 116, 139, 0.2);
+    border-color: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
 }
 
 .hidden {
@@ -128,15 +123,16 @@ input:focus, select:focus {
 /* Otaq Kodu Ekranı */
 #roomDisplay {
     display: inline-block;
-    padding: 10px 20px;
-    border-radius: 10px;
-    background: rgba(15, 23, 42, 0.9);
-    color: #e2e8f0;
-    font-size: 20px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.95);
+    color: #facc15;
+    font-size: 22px;
     margin: 15px 0;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(250, 204, 21, 0.4);
     letter-spacing: 2px;
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.15);
 }
 
 #teamStatus {
@@ -144,46 +140,46 @@ input:focus, select:focus {
     margin: 15px 0;
     font-weight: 600;
     min-height: 30px;
-    letter-spacing: 0.5px;
 }
 
-/* Oyunçunun Əsas BAS Düyməsi (Elite Studio Buzzer) */
+/* Oyunçunun Əsas BAS Düyməsi (Rənglər saxlanılıb, premiumlaşdırılıb) */
 #gamePage button.press-btn {
-    width: 220px;
-    height: 220px;
+    width: 210px;
+    height: 210px;
     border-radius: 50%;
     font-size: 32px;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: 2px;
-    background: radial-gradient(circle at 35% 30%, #ef4444, #991b1b 70%, #450a0a);
-    box-shadow: 0 0 40px rgba(239, 68, 68, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: radial-gradient(circle at 35% 30%, #ef4444, #b91c1c 70%, #450a0a);
+    box-shadow: 0 0 35px rgba(239, 68, 68, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(252, 165, 165, 0.5);
     margin: 25px auto;
 }
 
 #gamePage button.press-btn.green-buzzer {
     background: radial-gradient(circle at 35% 30%, #22c55e, #15803d 70%, #052e16);
-    box-shadow: 0 0 40px rgba(34, 197, 94, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 35px rgba(34, 197, 94, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(167, 243, 208, 0.5);
 }
 
 #gamePage button.press-btn:disabled {
-    background: radial-gradient(circle at 35% 30%, #1e293b, #0f172a 70%, #020617);
+    background: radial-gradient(circle at 35% 30%, #334155, #1e293b 70%, #0f172a);
     box-shadow: none;
     border-color: rgba(255, 255, 255, 0.05);
-    color: #475569;
+    color: #64748b;
     cursor: not-allowed;
 }
 
 /* Glassmorphism Kartları */
 .info-card {
-    background: var(--surface);
-    border: 1px solid var(--border-glass);
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(16px);
     border-radius: 16px;
-    padding: 15px;
+    padding: 16px;
     margin: 15px auto;
-    max-width: 420px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    max-width: 440px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 /* Xallar Şəbəkəsi */
@@ -195,17 +191,20 @@ input:focus, select:focus {
 }
 
 .score-card {
-    background: rgba(15, 23, 42, 0.6);
-    border-radius: 12px;
-    padding: 12px 8px;
-    border: 1px solid var(--border-glass);
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 14px;
+    padding: 12px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
+.score-card.green { border-color: rgba(34, 197, 94, 0.3); }
+.score-card.red { border-color: rgba(239, 68, 68, 0.3); }
+
 .score-card h4 {
-    margin: 0 0 5px 0;
+    margin: 0 0 6px 0;
     font-size: 13px;
     color: #94a3b8;
     font-weight: 600;
@@ -226,7 +225,7 @@ input:focus, select:focus {
 
 .score-actions button {
     width: auto !important;
-    padding: 6px 10px !important;
+    padding: 6px 12px !important;
     margin: 0 !important;
     font-size: 14px !important;
     border-radius: 8px !important;
@@ -244,8 +243,8 @@ input:focus, select:focus {
     width: auto !important;
     padding: 12px 16px !important;
     margin: 0 !important;
-    background: rgba(153, 27, 27, 0.4) !important;
-    border-color: rgba(239, 68, 68, 0.3) !important;
+    background: rgba(153, 27, 27, 0.5) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
     border-radius: 10px !important;
 }
 
@@ -253,7 +252,7 @@ input:focus, select:focus {
 #winnerOverlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(5, 5, 8, 0.95);
+    background: rgba(6, 8, 16, 0.95);
     z-index: 9999;
     display: none;
     flex-direction: column;
@@ -265,18 +264,19 @@ input:focus, select:focus {
 }
 
 .win-text {
-    font-size: 38px;
+    font-size: 36px;
     margin: 20px 0;
-    color: #e2e8f0;
+    color: #facc15;
     font-weight: 800;
     letter-spacing: 2px;
+    text-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
     line-height: 1.3;
 }
 
 .lose-text {
     font-size: 26px;
     margin: 20px 0;
-    color: #64748b;
+    color: #94a3b8;
     font-weight: 600;
     line-height: 1.3;
 }
@@ -289,12 +289,12 @@ input:focus, select:focus {
 
 <div id="main">
     <h1>BRAIN RING</h1>
-    <button class="admin" onclick="showAdmin()">Aparıcı Panel</button>
-    <button class="team" onclick="showTeam()">Komanda Girişi</button>
+    <button class="admin" onclick="showAdmin()">👑 Aparıcı Panel</button>
+    <button class="team" onclick="showTeam()">👥 Komanda Girişi</button>
 </div>
 
 <div id="adminPage" class="hidden">
-    <h2>Aparıcı / İzləyici</h2>
+    <h2>👑 Aparıcı / İzləyici</h2>
     <input id="password" type="password" placeholder="Şifrə">
     <div id="spectatorCodeBox" class="hidden">
         <input id="spectatorRoomCode" placeholder="Otaq Kodu">
@@ -304,12 +304,12 @@ input:focus, select:focus {
 </div>
 
 <div id="teamPage" class="hidden">
-    <h2>Komanda Qeydiyyatı</h2>
+    <h2>👥 Komanda Qeydiyyatı</h2>
     <input id="teamName" placeholder="Komanda adı">
     <input id="roomCode" placeholder="Otaq kodu">
     <select id="teamColor">
-        <option value="green">Yaşıl Masa</option>
-        <option value="red">Qırmızı Masa</option>
+        <option value="green">🟢 Yaşıl Masa</option>
+        <option value="red">🔴 Qırmızı Masa</option>
     </select>
     <button class="team" onclick="joinRoom()">QOŞUL</button>
     <button class="backBtn" onclick="goHome()">Geri</button>
@@ -319,17 +319,17 @@ input:focus, select:focus {
     <h2 id="myTeam"></h2>
     
     <div class="info-card">
-        <div style="display:flex; justify-content:space-around; font-size:14px; font-weight:600; color:#94a3b8;">
-            <div id="greenTeamPlayer">Yaşıl: -</div>
-            <div id="redTeamPlayer">Qırmızı: -</div>
+        <div style="display:flex; justify-content:space-around; font-size:14px; font-weight:600;">
+            <div id="greenTeamPlayer" style="color:#4ade80;">🟢 Yaşıl: -</div>
+            <div id="redTeamPlayer" style="color:#f87171;">🔴 Qırmızı: -</div>
         </div>
-        <hr style="border-color:var(--border-glass); margin:10px 0;">
-        <div style="font-size:20px; font-weight:800; letter-spacing: 1px;">
-            <span id="greenScorePlayer">0</span> &nbsp;:&nbsp; <span id="redScorePlayer">0</span>
+        <hr style="border-color:rgba(255,255,255,0.08); margin:10px 0;">
+        <div style="font-size:22px; font-weight:800; letter-spacing: 1px;">
+            🟢 <span id="greenScorePlayer">0</span> &nbsp;:&nbsp; <span id="redScorePlayer">0</span> 🔴
         </div>
     </div>
 
-    <h1 id="playerTimer" style="font-size: 48px; color: #f8fafc; margin: 10px 0; font-weight: 800;">20</h1>
+    <h1 id="playerTimer" style="font-size: 50px; color: #facc15; margin: 10px 0; font-weight: 800; text-shadow: 0 0 20px rgba(250,204,21,0.3);">20</h1>
     <button id="pressButtonElem" class="team press-btn" onclick="pressButton()">BAS</button>
     <h2 id="teamStatus"></h2>
     
@@ -339,59 +339,59 @@ input:focus, select:focus {
 </div>
 
 <div id="adminPanel" class="hidden">
-    <h2>Aparıcı İdarəetməsi</h2>
+    <h2>👑 Aparıcı İdarəetməsi</h2>
     <button class="admin" onclick="createRoom()">OTAQ YARAT</button>
     <br>
     <div id="roomDisplay" class="hidden"></div>
 
     <div class="info-card">
-        <div style="display:flex; justify-content:space-around; font-size:14px; font-weight:600; color:#94a3b8;">
-            <div id="greenTeam">Yaşıl: -</div>
-            <div id="redTeam">Qırmızı: -</div>
+        <div style="display:flex; justify-content:space-around; font-size:14px; font-weight:600;">
+            <div id="greenTeam" style="color:#4ade80;">🟢 Yaşıl: -</div>
+            <div id="redTeam" style="color:#f87171;">🔴 Qırmızı: -</div>
         </div>
     </div>
 
-    <h2 id="winner" style="font-size: 20px; color: #e2e8f0; margin: 15px 0; font-weight: 700;"></h2>
+    <h2 id="winner" style="font-size: 22px; color: #38bdf8; margin: 15px 0; font-weight: 700;"></h2>
 
-    <h1 id="adminTimer" style="font-size: 48px; color: #f8fafc; margin: 10px 0; font-weight: 800;">20</h1>
+    <h1 id="adminTimer" style="font-size: 50px; color: #facc15; margin: 10px 0; font-weight: 800; text-shadow: 0 0 20px rgba(250,204,21,0.3);">20</h1>
     
     <div style="display:flex; justify-content:center; gap:8px;">
         <button class="admin" style="width:48%; margin:5px 0;" onclick="startGame()">START</button>
-        <button class="admin" style="width:48%; margin:5px 0;" onclick="continueGame()">NEXT</button>
+        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,rgba(202,138,4,0.8),rgba(161,98,7,0.9));" onclick="continueGame()">NEXT</button>
     </div>
     <div style="display:flex; justify-content:center; gap:8px;">
-        <button class="admin" style="width:48%; margin:5px 0; background:rgba(153, 27, 27, 0.3); border-color:rgba(239, 68, 68, 0.2);" onclick="resetGame()">RESET</button>
-        <button class="admin" style="width:48%; margin:5px 0;" onclick="showScores()">XALLAR</button>
+        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,rgba(185,28,28,0.8),rgba(127,29,29,0.9));" onclick="resetGame()">RESET</button>
+        <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,rgba(109,40,217,0.8),rgba(91,33,182,0.9));" onclick="showScores()">XALLAR</button>
     </div>
 </div>
 
 <div id="scorePage" class="hidden">
-    <h2>Xalların İdarəsi</h2>
+    <h2>🏆 Xalların İdarəsi</h2>
 
     <div class="info-card">
         <div class="score-grid">
-            <div class="score-card">
+            <div class="score-card green">
                 <div>
-                    <h4 id="scoreGreenName">Yaşıl Masa</h4>
+                    <h4 id="scoreGreenName">🟢 Yaşıl Masa</h4>
                     <div class="score-num" id="greenScore">0</div>
                     <div class="score-actions">
-                        <button class="admin" onclick="changeScore('green',-1)">-</button>
-                        <button class="admin" onclick="changeScore('green',1)">+</button>
+                        <button class="team" onclick="changeScore('green',-1)">-</button>
+                        <button class="team" onclick="changeScore('green',1)">+</button>
                     </div>
                 </div>
-                <button style="width:100%; margin:10px 0 0 0 !important; padding:8px !important; font-size:12px !important; background:rgba(30, 41, 59, 0.8);" onclick="declareWinner('green')">Qalib Et</button>
+                <button style="width:100%; margin:10px 0 0 0 !important; padding:8px !important; font-size:12px !important; background:linear-gradient(135deg,rgba(202,138,4,0.8),rgba(161,98,7,0.9));" onclick="declareWinner('green')">Qalib Et</button>
             </div>
 
-            <div class="score-card">
+            <div class="score-card red">
                 <div>
-                    <h4 id="scoreRedName">Qırmızı Masa</h4>
+                    <h4 id="scoreRedName">🔴 Qırmızı Masa</h4>
                     <div class="score-num" id="redScore">0</div>
                     <div class="score-actions">
-                        <button class="admin" onclick="changeScore('red',-1)">-</button>
-                        <button class="admin" onclick="changeScore('red',1)">+</button>
+                        <button class="admin" style="background:linear-gradient(135deg,rgba(185,28,28,0.8),rgba(127,29,29,0.9));" onclick="changeScore('red',-1)">-</button>
+                        <button class="admin" style="background:linear-gradient(135deg,rgba(185,28,28,0.8),rgba(127,29,29,0.9));" onclick="changeScore('red',1)">+</button>
                     </div>
                 </div>
-                <button style="width:100%; margin:10px 0 0 0 !important; padding:8px !important; font-size:12px !important; background:rgba(30, 41, 59, 0.8);" onclick="declareWinner('red')">Qalib Et</button>
+                <button style="width:100%; margin:10px 0 0 0 !important; padding:8px !important; font-size:12px !important; background:linear-gradient(135deg,rgba(202,138,4,0.8),rgba(161,98,7,0.9));" onclick="declareWinner('red')">Qalib Et</button>
             </div>
         </div>
 
@@ -475,7 +475,7 @@ function loginAdmin(){
         
         hideAll();
         document.getElementById("gamePage").style.display="block";
-        document.getElementById("myTeam").innerHTML = "İzləyici Rejimi";
+        document.getElementById("myTeam").innerHTML = "👀 İzləyici Rejimi";
         document.getElementById("pressButtonElem").style.display = "none";
         document.getElementById("teamStatus").innerHTML = "Canlı izlənilir...";
         
@@ -500,8 +500,8 @@ function startSpectatorMode(code){
                 }
                 let g2 = document.getElementById("greenTeamPlayer");
                 let r2 = document.getElementById("redTeamPlayer");
-                if(g2) g2.innerHTML = "Yaşıl: " + green;
-                if(r2) r2.innerHTML = "Qırmızı: " + red;
+                if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
+                if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
             });
 
             onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
@@ -531,11 +531,11 @@ function startSpectatorMode(code){
                 if(data){
                     stopLocalTimer();
                     if(data.valid===false){
-                        status.innerHTML="FAIL START: "+data.team;
-                        status.style.color="#ef4444";
+                        status.innerHTML="❌ FAIL START: "+data.team;
+                        status.style.color="#f87171";
                     } else if(data.valid===true){
-                        status.innerHTML="Basdı: "+data.team;
-                        status.style.color="#22c55e";
+                        status.innerHTML="🔴 Basdı: "+data.team;
+                        status.style.color="#4ade80";
                     }
                 } else {
                     status.innerHTML="Canlı izlənilir...";
@@ -549,7 +549,7 @@ function startSpectatorMode(code){
                 let msg = document.getElementById("winnerMessage");
                 if(winnerColor){
                     overlay.style.display = "flex";
-                    msg.innerHTML = "OYUN BİTDİ<br><span style='font-size:20px; color:#94a3b8'>" + (winnerColor === 'green' ? "Yaşıl Masa qalib oldu" : "Qırmızı Masa qalib oldu") + "</span>";
+                    msg.innerHTML = "🏆 OYUN BİTDİ 🏆<br><span style='font-size:22px; color:#94a3b8'>" + (winnerColor === 'green' ? "🟢 Yaşıl Masa qalib oldu" : "🔴 Qırmızı Masa qalib oldu") + "</span>";
                 } else {
                     overlay.style.display = "none";
                 }
@@ -562,7 +562,7 @@ function createRoom(){
     let code = Math.floor(1000 + Math.random()*9000);
     let rDisp = document.getElementById("roomDisplay");
     rDisp.style.display = "inline-block";
-    rDisp.innerHTML = "Otaq kodu: " + code;
+    rDisp.innerHTML = "🏠 Otaq kodu: " + code;
     listenPress(code);
     
     import("./firebase.js").then((module)=>{
@@ -589,11 +589,11 @@ function listenPress(code){
                 if(data){
                     stopLocalTimer();
                     if(data.valid === true){
-                        winElem.innerHTML = data.team + " BASDI!";
-                        winElem.style.color = "#22c55e";
+                        winElem.innerHTML = "🔴 " + data.team + " BASDI!";
+                        winElem.style.color = "#4ade80";
                     }else{
-                        winElem.innerHTML = data.team + " - FAIL START";
-                        winElem.style.color = "#ef4444";
+                        winElem.innerHTML = "⚠️ " + data.team + " - FAIL START";
+                        winElem.style.color = "#f87171";
                     }
                 }
             });
@@ -610,18 +610,18 @@ function listenPress(code){
 
                 let g = document.getElementById("greenTeam");
                 let r = document.getElementById("redTeam");
-                if(g) g.innerHTML = "Yaşıl: " + green;
-                if(r) r.innerHTML = "Qırmızı: " + red;
+                if(g) g.innerHTML = "🟢 Yaşıl: " + green;
+                if(r) r.innerHTML = "🔴 Qırmızı: " + red;
 
                 let g2 = document.getElementById("greenTeamPlayer");
                 let r2 = document.getElementById("redTeamPlayer");
-                if(g2) g2.innerHTML = "Yaşıl: " + green;
-                if(r2) r2.innerHTML = "Qırmızı: " + red;
+                if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
+                if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
 
                 let sGreen = document.getElementById("scoreGreenName");
                 let sRed = document.getElementById("scoreRedName");
-                if(sGreen) sGreen.innerHTML = "Yaşıl: " + green;
-                if(sRed) sRed.innerHTML = "Qırmızı: " + red;
+                if(sGreen) sGreen.innerHTML = "🟢 Yaşıl: " + green;
+                if(sRed) sRed.innerHTML = "🔴 Qırmızı: " + red;
             });
 
             onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
@@ -661,7 +661,7 @@ function joinRoom(){
     let color = document.getElementById("teamColor").value;
 
     if(name==="" || code===""){
-        alert("Ad və otaq kodunu daxil edin");
+        alert("Zəhmət olmasa ad və otaq kodunu daxil edin");
         return;
     }
 
@@ -675,7 +675,7 @@ function joinRoom(){
                         let teams = teamSnapshot.val() || {};
                         for(let team in teams){
                             if(teams[team].table === color){
-                                alert("Bu masa artıq tutulub!");
+                                alert("⚠️ Bu masa artıq tutulub!");
                                 return;
                             }
                         }
@@ -704,13 +704,13 @@ function joinRoom(){
                             }
                             let g1 = document.getElementById("greenTeam");
                             let r1 = document.getElementById("redTeam");
-                            if(g1) g1.innerHTML = "Yaşıl: " + green;
-                            if(r1) r1.innerHTML = "Qırmızı: " + red;
+                            if(g1) g1.innerHTML = "🟢 Yaşıl: " + green;
+                            if(r1) r1.innerHTML = "🔴 Qırmızı: " + red;
 
                             let g2 = document.getElementById("greenTeamPlayer");
                             let r2 = document.getElementById("redTeamPlayer");
-                            if(g2) g2.innerHTML = "Yaşıl: " + green;
-                            if(r2) r2.innerHTML = "Qırmızı: " + red;
+                            if(g2) g2.innerHTML = "🟢 Yaşıl: " + green;
+                            if(r2) r2.innerHTML = "🔴 Qırmızı: " + red;
                         });
 
                         onValue(ref(db,"rooms/"+code+"/scores"),(snapshot)=>{
@@ -746,19 +746,19 @@ function joinRoom(){
                                 }
                                 if(data.valid===false){
                                     if(data.team===name){
-                                        status.innerHTML="FAIL START";
-                                        status.style.color="#ef4444";
+                                        status.innerHTML="❌ FAIL START";
+                                        status.style.color="#f87171";
                                     } else {
-                                        status.innerHTML="Rəqib fail start etdi";
-                                        status.style.color="#f59e0b";
+                                        status.innerHTML="⚠️ Rəqib fail start etdi";
+                                        status.style.color="#facc15";
                                     }
                                 } else if(data.valid===true){
                                     if(data.team===name){
-                                        status.innerHTML="Siz ilk basdınız!";
-                                        status.style.color="#22c55e";
+                                        status.innerHTML="✅ Siz ilk basdınız!";
+                                        status.style.color="#4ade80";
                                     } else {
-                                        status.innerHTML="Rəqib basdı: " + data.team;
-                                        status.style.color="#ef4444";
+                                        status.innerHTML="🔴 Rəqib basdı: " + data.team;
+                                        status.style.color="#f87171";
                                     }
                                 }
                             }
@@ -774,15 +774,14 @@ function joinRoom(){
                                     button.innerHTML = "BAS";
                                     if(status) { status.innerHTML = ""; }
                                 } else if(signal.type === "next"){
-                                    // Əgər bu komanda fail start etmişdisə, blokda qalmağa davam edir
                                     if(signal.failTeam === name){
                                         button.disabled = true;
                                         button.innerHTML = "BLOK";
-                                        if(status) { status.innerHTML = "Fail start etdiyiniz üçün bu tur blokdarsınız!"; status.style.color="#ef4444"; }
+                                        if(status) { status.innerHTML = "⛔ Fail start etdiyiniz üçün bu tur blokdarsınız!"; status.style.color="#f87171"; }
                                     } else if(signal.blockedTeam === name){
                                         button.disabled = true;
                                         button.innerHTML = "🔒";
-                                        if(status) { status.innerHTML = "Şansınızı itirdiniz"; status.style.color="#ef4444"; }
+                                        if(status) { status.innerHTML = "⛔ Şansınızı itirdiniz"; status.style.color="#f87171"; }
                                     } else {
                                         button.disabled = false;
                                         button.innerHTML = "BAS";
@@ -800,9 +799,9 @@ function joinRoom(){
                             if(winnerColor){
                                 overlay.style.display = "flex";
                                 if(winnerColor === color){
-                                    msg.innerHTML = "TƏBRİKLƏR!<br><span style='font-size:20px; color:#22c55e'>SİZ QALİB OLDUNUZ</span>";
+                                    msg.innerHTML = "🏆 TƏBRİKLƏR! 🏆<br><span style='font-size:22px; color:#4ade80'>SİZ QALİB OLDUNUZ!</span>";
                                 } else {
-                                    msg.innerHTML = "OYUN BİTDİ<br><span style='font-size:20px; color:#64748b'>Rəqib komanda qalib gəldi</span>";
+                                    msg.innerHTML = "❌ OYUN BİTDİ ❌<br><span style='font-size:22px; color:#94a3b8'>Rəqib komanda qalib gəldi</span>";
                                 }
                             } else {
                                 overlay.style.display = "none";
@@ -810,7 +809,7 @@ function joinRoom(){
                         });
                     });
                 } else {
-                    alert("Belə otaq mövcud deyil");
+                    alert("⚠️ Belə otaq mövcud deyil");
                 }
             });
         });
@@ -818,7 +817,7 @@ function joinRoom(){
 }
 
 function startGame(){
-    let code = document.getElementById("roomDisplay").innerText.replace("Otaq kodu: ","").trim();
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -834,7 +833,7 @@ function startGame(){
 }
 
 function continueGame(){
-    let code = document.getElementById("roomDisplay").innerText.replace("Otaq kodu: ","").trim();
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -843,7 +842,7 @@ function continueGame(){
             get(ref(db, "rooms/" + code + "/pressed")).then((pSnap) => {
                 let pressedData = pSnap.val();
                 if(!pressedData || !pressedData.team) {
-                    alert("NEXT yalnız kimsə basdıqdan sonra işləyir!");
+                    alert("⚠️ NEXT yalnız kimsə basdıqdan sonra işləyir!");
                     return;
                 }
 
@@ -853,7 +852,6 @@ function continueGame(){
 
                     let signalPayload = { type: "next", time: Date.now() };
                     
-                    // Əgər basan komanda FAIL START edibsə, onu xüsusi olaraq failTeam kimi qeyd edirik ki, blokda qalsın
                     if(pressedData.valid === false) {
                         signalPayload.failTeam = pressedData.team;
                     } else {
@@ -874,7 +872,7 @@ function continueGame(){
 }
 
 function resetGame(){
-    let code = document.getElementById("roomDisplay").innerText.replace("Otaq kodu: ","").trim();
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -926,15 +924,15 @@ function pressButton(){
                         });
 
                         if(started){
-                            document.getElementById("teamStatus").innerHTML = "Siz ilk basdınız!";
-                            document.getElementById("teamStatus").style.color = "#22c55e";
+                            document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!";
+                            document.getElementById("teamStatus").style.color = "#4ade80";
                         } else {
-                            document.getElementById("teamStatus").innerHTML = "FAIL START";
-                            document.getElementById("teamStatus").style.color = "#ef4444";
+                            document.getElementById("teamStatus").innerHTML = "❌ FAIL START";
+                            document.getElementById("teamStatus").style.color = "#f87171";
                         }
                     } else {
-                        document.getElementById("teamStatus").innerHTML = "Rəqib daha tez basdı";
-                        document.getElementById("teamStatus").style.color = "#ef4444";
+                        document.getElementById("teamStatus").innerHTML = "⛔ Rəqib daha tez basdı";
+                        document.getElementById("teamStatus").style.color = "#f87171";
                     }
                 });
             });
@@ -943,7 +941,7 @@ function pressButton(){
 }
 
 function changeScore(color, amount){
-    let code = document.getElementById("roomDisplay").innerText.replace("Otaq kodu: ","").trim();
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -960,8 +958,8 @@ function changeScore(color, amount){
 }
 
 function declareWinner(color){
-    let code = document.getElementById("roomDisplay").innerText.replace("Otaq kodu: ","").trim();
-    if(!confirm("Bu komanda yekun qalib elan olunacaq. Əminsiniz?")) return;
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    if(!confirm("Əminsiniz? Bu komanda yekun qalib elan olunacaq!")) return;
     
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -973,7 +971,7 @@ function declareWinner(color){
 }
 
 function resetScores(){
-    let code = document.getElementById("roomDisplay").innerText.replace("Otaq kodu: ","").trim();
+    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
     if(!confirm("Xalları sıfırlamaq istəyirsiniz?")) return;
 
     import("./firebase.js").then((module)=>{
@@ -1004,4 +1002,3 @@ function goHome(){
 
 </body>
 </html>
-f
