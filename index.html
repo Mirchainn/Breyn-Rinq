@@ -397,7 +397,6 @@ input:focus, select:focus {
 let timerInterval = null;
 let isSpectator = false;
 
-// Səhifə vəziyyətini yadda saxlamaq üçün funksiya
 function saveState(pageId) {
     localStorage.setItem("brainRingActivePage", pageId);
 }
@@ -483,6 +482,7 @@ function loginAdmin(){
         document.getElementById("teamStatus").innerHTML = "Canlı izlənilir...";
         
         saveState("gamePage");
+        localStorage.setItem("brainRingSpectatorCode", code);
         startSpectatorMode(code);
     } else {
         alert("Səhv şifrə");
@@ -590,6 +590,7 @@ function createRoom(){
     let rDisp = document.getElementById("roomDisplay");
     rDisp.style.display = "inline-block";
     rDisp.innerHTML = "🏠 Otaq kodu: " + code;
+    localStorage.setItem("brainRingAdminRoom", code);
     listenPress(code);
     
     import("./firebase.js").then((module)=>{
@@ -690,16 +691,7 @@ function listenPress(code){
     });
 }
 
-function joinRoom(){
-    let name = document.getElementById("teamName").value;
-    let code = document.getElementById("roomCode").value;
-    let color = document.getElementById("teamColor").value;
-
-    if(name==="" || code===""){
-        alert("Ad və otaq kodunu yaz");
-        return;
-    }
-
+function joinRoomWithData(name, code, color){
     import("./firebase.js").then((module)=>{
         let db = module.db;
         import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
@@ -709,15 +701,22 @@ function joinRoom(){
                     get(ref(db,"rooms/"+code+"/teams")).then((teamSnapshot)=>{
                         let teams = teamSnapshot.val() || {};
                         for(let team in teams){
-                            if(teams[team].table === color){
+                            // Əgər həmin masa başqa ada məxsusdursa və bu, sənin öz adın deyilsə
+                            if(teams[team].table === color && team !== name){
                                 alert("⚠️ Bu masa artıq tutulub!");
+                                goHome();
                                 return;
                             }
                         }
 
-                        document.getElementById("teamPage").style.display="none";
+                        hideAll();
                         document.getElementById("gamePage").style.display="block";
                         saveState("gamePage");
+
+                        // Məlumatları yadda saxlayırıq ki, səhifə yenilənəndə pozulmasın
+                        localStorage.setItem("brainRingTeamName", name);
+                        localStorage.setItem("brainRingRoomCode", code);
+                        localStorage.setItem("brainRingTeamColor", color);
 
                         document.getElementById("pressButtonElem").style.display = "inline-block";
 
@@ -859,14 +858,27 @@ function joinRoom(){
                     });
                 } else {
                     alert("Belə otaq yoxdur");
+                    goHome();
                 }
             });
         });
     });
 }
 
+function joinRoom(){
+    let name = document.getElementById("teamName").value.trim();
+    let code = document.getElementById("roomCode").value.trim();
+    let color = document.getElementById("teamColor").value;
+
+    if(name==="" || code===""){
+        alert("Ad və otaq kodunu yaz");
+        return;
+    }
+    joinRoomWithData(name, code, color);
+}
+
 function startGame(){
-    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -883,7 +895,7 @@ function startGame(){
 }
 
 function continueGame(){
-    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -923,7 +935,7 @@ function continueGame(){
 }
 
 function resetGame(){
-    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -948,8 +960,8 @@ function resetGame(){
 
 function pressButton(){
     if(isSpectator) return;
-    let name = document.getElementById("teamName").value;
-    let code = document.getElementById("roomCode").value;
+    let name = localStorage.getItem("brainRingTeamName");
+    let code = localStorage.getItem("brainRingRoomCode");
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -992,7 +1004,7 @@ function pressButton(){
 }
 
 function changeScore(color, amount){
-    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
     import("./firebase.js").then((module)=>{
         let db = module.db;
@@ -1011,7 +1023,7 @@ function changeScore(color, amount){
 }
 
 function declareWinner(color){
-    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
     if(!confirm("Əminsiniz? Bu komanda yekun qalib elan olunacaq!")) return;
     
     import("./firebase.js").then((module)=>{
@@ -1025,7 +1037,7 @@ function declareWinner(color){
 }
 
 function resetScores(){
-    let code = document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
     if(!confirm("Xalları sıfırlamaq istəyirsiniz?")) return;
 
     import("./firebase.js").then((module)=>{
@@ -1053,13 +1065,45 @@ function backToAdmin(){
 function goHome(){
     hideAll();
     localStorage.removeItem("brainRingActivePage");
+    localStorage.removeItem("brainRingTeamName");
+    localStorage.removeItem("brainRingRoomCode");
+    localStorage.removeItem("brainRingTeamColor");
+    localStorage.removeItem("brainRingAdminRoom");
+    localStorage.removeItem("brainRingSpectatorCode");
     document.getElementById("main").style.display="block";
 }
 
-// Səhifə yenilənəndə qaldığı səhifəni avtomatik bərpa etmək üçün:
+// Səhifə yenilənəndə qaldığı yeri və otağı bərpa etmək:
 window.onload = function() {
     let savedPage = localStorage.getItem("brainRingActivePage");
-    if(savedPage && document.getElementById(savedPage)) {
+    
+    if(savedPage === "gamePage") {
+        let savedName = localStorage.getItem("brainRingTeamName");
+        let savedCode = localStorage.getItem("brainRingRoomCode");
+        let savedColor = localStorage.getItem("brainRingTeamColor");
+        let specCode = localStorage.getItem("brainRingSpectatorCode");
+
+        if(savedName && savedCode && savedColor) {
+            joinRoomWithData(savedName, savedCode, savedColor);
+        } else if(specCode) {
+            hideAll();
+            document.getElementById("gamePage").style.display="block";
+            document.getElementById("myTeam").innerHTML = "👀 İzləyici Rejimi";
+            document.getElementById("pressButtonElem").style.display = "none";
+            document.getElementById("teamStatus").innerHTML = "Canlı izlənilir...";
+            startSpectatorMode(specCode);
+        }
+    } else if(savedPage === "adminPanel") {
+        let adminRoom = localStorage.getItem("brainRingAdminRoom");
+        hideAll();
+        document.getElementById("adminPanel").style.display="block";
+        if(adminRoom) {
+            let rDisp = document.getElementById("roomDisplay");
+            rDisp.style.display = "inline-block";
+            rDisp.innerHTML = "🏠 Otaq kodu: " + adminRoom;
+            listenPress(adminRoom);
+        }
+    } else if(savedPage && document.getElementById(savedPage)) {
         hideAll();
         document.getElementById(savedPage).style.display = "block";
     }
