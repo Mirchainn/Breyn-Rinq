@@ -162,7 +162,7 @@ input:focus, select:focus {
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
-/* Xallar Şəbəkəsi (Düzəldilmiş səliqəli dizayn) */
+/* Xallar Şəbəkəsi */
 .score-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -318,6 +318,8 @@ input:focus, select:focus {
     <button id="pressButtonElem" class="team press-btn" onclick="pressButton()">🔴 BAS</button>
     <h2 id="teamStatus"></h2>
     
+    <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
+
     <div id="winnerOverlay">
         <div id="winnerMessage"></div>
     </div>
@@ -348,6 +350,8 @@ input:focus, select:focus {
         <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,#ef4444,#b91c1c);" onclick="resetGame()">RESET</button>
         <button class="admin" style="width:48%; margin:5px 0; background:linear-gradient(135deg,#8b5cf6,#6d28d9);" onclick="showScores()">🏆 XALLAR</button>
     </div>
+    
+    <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
 </div>
 
 <div id="scorePage" class="hidden">
@@ -393,6 +397,11 @@ input:focus, select:focus {
 let timerInterval = null;
 let isSpectator = false;
 
+// Səhifə vəziyyətini yadda saxlamaq üçün funksiya
+function saveState(pageId) {
+    localStorage.setItem("brainRingActivePage", pageId);
+}
+
 function startLocalTimer(startTime, duration = 20) {
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
@@ -428,6 +437,7 @@ function showAdmin(){
     document.getElementById("adminPage").style.display="block";
     document.getElementById("spectatorCodeBox").style.display="none";
     document.getElementById("password").value = "";
+    saveState("adminPage");
 }
 
 document.getElementById("password").addEventListener("input", function(){
@@ -444,6 +454,7 @@ function showTeam(){
     hideAll();
     isSpectator = false;
     document.getElementById("teamPage").style.display="block";
+    saveState("teamPage");
 }
 
 function loginAdmin(){
@@ -451,6 +462,7 @@ function loginAdmin(){
     if(pass === "TMGRT"){
         hideAll();
         document.getElementById("adminPanel").style.display="block";
+        saveState("adminPanel");
     } else if(pass.toUpperCase() === "MRS"){
         let code = document.getElementById("spectatorRoomCode").value.trim();
         if(code === ""){
@@ -470,6 +482,7 @@ function loginAdmin(){
         document.getElementById("pressButtonElem").style.display = "none";
         document.getElementById("teamStatus").innerHTML = "Canlı izlənilir...";
         
+        saveState("gamePage");
         startSpectatorMode(code);
     } else {
         alert("Səhv şifrə");
@@ -704,6 +717,7 @@ function joinRoom(){
 
                         document.getElementById("teamPage").style.display="none";
                         document.getElementById("gamePage").style.display="block";
+                        saveState("gamePage");
 
                         document.getElementById("pressButtonElem").style.display = "inline-block";
 
@@ -800,7 +814,7 @@ function joinRoom(){
                                     if(signal.failTeam === name){
                                         button.disabled = true;
                                         button.innerHTML = "BLOK";
-                                        if(status) { status.innerHTML = "⛔ Fail start etdiyiniz üçün bu tur blokdasınız!"; status.style.color="#f87171"; }
+                                        if(status) { status.innerHTML = "⛔ Fail start etdiyiniz üçün bu tur blokdarsınız!"; status.style.color="#f87171"; }
                                     } else if(signal.blockedTeam === name){
                                         button.disabled = true;
                                         button.innerHTML = "🔒";
@@ -888,7 +902,6 @@ function continueGame(){
 
                     let signalPayload = { type: "next", time: Date.now() };
                     
-                    // Əgər basan komanda fail start edibsə, onu failTeam olaraq bloklayırıq
                     if(pressedData.valid === false) {
                         signalPayload.failTeam = pressedData.team;
                     } else {
@@ -1028,17 +1041,29 @@ function resetScores(){
 function showScores(){
     document.getElementById("adminPanel").style.display="none";
     document.getElementById("scorePage").style.display="block";
+    saveState("scorePage");
 }
 
 function backToAdmin(){
     document.getElementById("scorePage").style.display="none";
     document.getElementById("adminPanel").style.display="block";
+    saveState("adminPanel");
 }
 
 function goHome(){
     hideAll();
+    localStorage.removeItem("brainRingActivePage");
     document.getElementById("main").style.display="block";
 }
+
+// Səhifə yenilənəndə qaldığı səhifəni avtomatik bərpa etmək üçün:
+window.onload = function() {
+    let savedPage = localStorage.getItem("brainRingActivePage");
+    if(savedPage && document.getElementById(savedPage)) {
+        hideAll();
+        document.getElementById(savedPage).style.display = "block";
+    }
+};
 </script>
 
 <audio id="startSound" preload="auto"><source src="Ding.mp3" type="audio/mpeg"></audio>
