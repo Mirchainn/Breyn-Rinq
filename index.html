@@ -318,7 +318,7 @@ input:focus, select:focus {
     <button id="pressButtonElem" class="team press-btn" onclick="pressButton()">🔴 BAS</button>
     <h2 id="teamStatus"></h2>
     
-    <button class="backBtn" onclick="goHome()">⬅️ Geri</button>
+    <button class="backBtn" onclick="leaveTable()" style="background: linear-gradient(135deg, #ef4444, #991b1b) !important;">🚪 Masadan Ayrıl</button>
 
     <div id="winnerOverlay">
         <div id="winnerMessage"></div>
@@ -701,7 +701,6 @@ function joinRoomWithData(name, code, color){
                     get(ref(db,"rooms/"+code+"/teams")).then((teamSnapshot)=>{
                         let teams = teamSnapshot.val() || {};
                         for(let team in teams){
-                            // Əgər həmin masa başqa ada məxsusdursa və bu, sənin öz adın deyilsə
                             if(teams[team].table === color && team !== name){
                                 alert("⚠️ Bu masa artıq tutulub!");
                                 goHome();
@@ -713,7 +712,6 @@ function joinRoomWithData(name, code, color){
                         document.getElementById("gamePage").style.display="block";
                         saveState("gamePage");
 
-                        // Məlumatları yadda saxlayırıq ki, səhifə yenilənəndə pozulmasın
                         localStorage.setItem("brainRingTeamName", name);
                         localStorage.setItem("brainRingRoomCode", code);
                         localStorage.setItem("brainRingTeamColor", color);
@@ -813,7 +811,7 @@ function joinRoomWithData(name, code, color){
                                     if(signal.failTeam === name){
                                         button.disabled = true;
                                         button.innerHTML = "BLOK";
-                                        if(status) { status.innerHTML = "⛔ Fail start etdiyiniz üçün bu tur blokdasınız!"; status.style.color="#f87171"; }
+                                        if(status) { status.innerHTML = "⛔ Fail start etdiyiniz üçün bu tur blokdarsınız!"; status.style.color="#f87171"; }
                                     } else if(signal.blockedTeam === name){
                                         button.disabled = true;
                                         button.innerHTML = "🔒";
@@ -875,6 +873,27 @@ function joinRoom(){
         return;
     }
     joinRoomWithData(name, code, color);
+}
+
+function leaveTable(){
+    if(!confirm("Həqiqətən masadan ayrılırsınız? Masa boşalacaq.")) return;
+
+    let name = localStorage.getItem("brainRingTeamName");
+    let code = localStorage.getItem("brainRingRoomCode");
+
+    if(name && code){
+        import("./firebase.js").then((module)=>{
+            let db = module.db;
+            import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+            .then(({ref, remove})=>{
+                remove(ref(db, "rooms/" + code + "/teams/" + name)).finally(() => {
+                    goHome();
+                });
+            });
+        });
+    } else {
+        goHome();
+    }
 }
 
 function startGame(){
@@ -1073,7 +1092,6 @@ function goHome(){
     document.getElementById("main").style.display="block";
 }
 
-// Səhifə yenilənəndə qaldığı yeri və otağı bərpa etmək:
 window.onload = function() {
     let savedPage = localStorage.getItem("brainRingActivePage");
     
@@ -1117,3 +1135,4 @@ window.onload = function() {
 
 </body>
 </html>
+
