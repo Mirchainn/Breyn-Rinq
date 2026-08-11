@@ -368,7 +368,10 @@ input:focus, select:focus {
                         <button class="team" onclick="changeScore('green',1)">➕</button>
                     </div>
                 </div>
-                <button style="width:100%; margin:10px 0 0 0 !important; padding:10px !important; font-size:15px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('green')">🏆 Qalib Et</button>
+                <div>
+                    <button style="width:100%; margin:10px 0 5px 0 !important; padding:10px !important; font-size:15px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('green')">🏆 Qalib Et</button>
+                    <button style="width:100%; margin:0 !important; padding:8px !important; font-size:13px !important; background:linear-gradient(135deg,#ef4444,#991b1b); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="adminKickTeam('green')">🚪 Masadan Qaldır</button>
+                </div>
             </div>
 
             <div class="score-card red">
@@ -380,7 +383,10 @@ input:focus, select:focus {
                         <button class="admin" style="background:#dc2626;" onclick="changeScore('red',1)">➕</button>
                     </div>
                 </div>
-                <button style="width:100%; margin:10px 0 0 0 !important; padding:10px !important; font-size:15px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('red')">🏆 Qalib Et</button>
+                <div>
+                    <button style="width:100%; margin:10px 0 5px 0 !important; padding:10px !important; font-size:15px !important; background:linear-gradient(135deg,#eab308,#ca8a04); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="declareWinner('red')">🏆 Qalib Et</button>
+                    <button style="width:100%; margin:0 !important; padding:8px !important; font-size:13px !important; background:linear-gradient(135deg,#ef4444,#991b1b); border-radius:10px; color:white; font-weight:bold; border:none; cursor:pointer;" onclick="adminKickTeam('red')">🚪 Masadan Qaldır</button>
+                </div>
             </div>
         </div>
 
@@ -733,6 +739,14 @@ function joinRoomWithData(name, code, color){
                         
                         onValue(ref(db,"rooms/"+code+"/teams"),(snapshot)=>{
                             let teams = snapshot.val() || {};
+                            let currentNames = Object.keys(teams);
+                            // Əgər admin tərəfindən masadan qaldırılıbsa (komandalar siyahısında adı yoxdursa)
+                            if(!currentNames.includes(name)){
+                                alert("⚠️ Siz admin tərəfindən masadan uzaqlaşdırıldınız!");
+                                goHome();
+                                return;
+                            }
+
                             let green = "-";
                             let red = "-";
                             for(let team in teams){
@@ -896,6 +910,26 @@ function leaveTable(){
     }
 }
 
+function adminKickTeam(color){
+    let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
+    if(!confirm((color === 'green' ? "Yaşıl" : "Qırmızı") + " masadakı komandanı masadan qaldırmaq istədiyinizə əminsiniz?")) return;
+
+    import("./firebase.js").then((module)=>{
+        let db = module.db;
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+        .then(({ref, get, remove})=>{
+            get(ref(db, "rooms/" + code + "/teams")).then((snapshot)=>{
+                let teams = snapshot.val() || {};
+                for(let team in teams){
+                    if(teams[team].table === color){
+                        remove(ref(db, "rooms/" + code + "/teams/" + team));
+                    }
+                }
+            });
+        });
+    });
+}
+
 function startGame(){
     let code = localStorage.getItem("brainRingAdminRoom") || document.getElementById("roomDisplay").innerText.replace("🏠 Otaq kodu: ","").trim();
 
@@ -1008,7 +1042,7 @@ function pressButton(){
 
                         if(started){
                             document.getElementById("teamStatus").innerHTML = "✅ Siz ilk basdınız!";
-                            set(ref(db,"rooms/"+code+"/sound"),{ type:"press", time:Date.now() });
+                            set(ref(db,"rooms/"+code+"/sound"),{ type:"press", time:Date.now()});
                         } else {
                             document.getElementById("teamStatus").innerHTML = "❌ FAIL START";
                             set(ref(db,"rooms/"+code+"/sound"),{ type:"fail", time:Date.now() });
@@ -1135,4 +1169,3 @@ window.onload = function() {
 
 </body>
 </html>
-
